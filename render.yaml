@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: personal-task-manager
+    runtime: java
+    plan: free
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/demo-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /login
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: taskdb
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: taskdb
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: taskdb
+          property: password
+      - key: APP_CRYPTO_KEY
+        generateValue: true
+
+databases:
+  - name: taskdb
+    plan: free

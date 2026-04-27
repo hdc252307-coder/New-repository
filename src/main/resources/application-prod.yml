@@ -1,5 +1,6 @@
 server:
-  port: 8080
+  # Render injects PORT at runtime. Fallback keeps local prod runs working.
+  port: ${PORT:8080}
   forward-headers-strategy: framework
 spring:
   datasource:
