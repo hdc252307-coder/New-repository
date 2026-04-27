@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${date} + ' の予定'">日付詳細</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="day-card">
+
+    <div class="day-header">
+        <a th:href="@{'/calendar?year=' + ${date.year} + '&month=' + ${date.monthValue}}"
+           class="back-btn">← カレンダーに戻る</a>
+        <h2 th:text="${date} + ' の予定'"></h2>
+    </div>
+
+    <!-- タスク一覧 -->
+    <section class="day-section">
+        <h3>タスク</h3>
+
+        <div th:if="${tasks.isEmpty()}" class="empty-msg">
+            タスクはありません
+        </div>
+
+        <div class="item-list">
+            <div class="item-card task"
+                 th:each="t : ${tasks}">
+                <div class="item-title" th:text="${t.title}"></div>
+
+                <div class="item-meta">
+                    <span th:text="'優先度: ' + ${t.priority}"></span>
+                    <span th:text="'見積: ' + ${t.estimatedMinutes} + '分'"></span>
+                </div>
+
+                <div class="day-buttons">
+
+                    <!-- 編集 -->
+                    <a th:href="@{'/tasks/' + ${t.id} + '/edit?returnTo=/calendar/day%3Fdate=' + ${date}}"
+                       class="btn edit">編集</a>
+
+                    <!-- 削除（CSRF 無効化中なので hidden 不要） -->
+                    <form th:action="@{'/tasks/' + ${t.id} + '/delete'}" method="post">
+                        <button type="submit" class="btn delete-small">削除</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- スケジュール一覧 -->
+    <section class="day-section">
+        <h3>スケジュール</h3>
+
+        <div th:if="${schedules.isEmpty()}" class="empty-msg">
+            スケジュールはありません
+        </div>
+
+        <div class="item-list">
+            <div class="item-card schedule"
+                th:each="schedule : ${schedules}">
+
+                <div class="item-title" th:text="${schedule.title}"></div>
+
+                <div class="item-meta"
+                    th:text="${#temporals.format(schedule.startDateTime, 'HH:mm')} + ' 〜 ' + ${#temporals.format(schedule.endDateTime, 'HH:mm')}">
+                </div>
+
+                <div class="day-buttons">
+
+                    <!-- 編集 -->
+                    <a th:href="@{'/schedule/' + ${schedule.id} + '/edit'}" class="btn edit">編集</a>
+
+                    <!-- 削除 -->
+                    <form th:action="@{'/schedule/' + ${schedule.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('本当に削除しますか？');">
+                        <button type="submit" class="btn delete-small">削除</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>

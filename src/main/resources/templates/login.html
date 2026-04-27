@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+
+        <h2 class="login-title">ログイン</h2>
+
+        <!-- ログイン失敗時のメッセージ -->
+        <div th:if="${param.error != null and param.error != ''}" class="login-error">
+            ユーザー名またはパスワードが違います。
+        </div>
+
+
+
+        <form th:action="@{/login}" method="post" class="login-form">
+
+
+            <div>
+                <label>ユーザー名</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div>
+                <label>パスワード</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <!-- ★ Remember-Me 復活部分 ★ -->
+            <div class="remember">
+                <input type="checkbox" name="rememberMe" id="rememberMe">
+                <label for="rememberMe" style="margin:0;">ログイン情報を保持する</label>
+            </div>
+
+            <button type="submit" class="login-btn">ログイン</button>
+        </form>
+
+        <div class="link-area">
+            <a href="/register" class="login-link">新規登録はこちら</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

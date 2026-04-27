@@ -1,0 +1,67 @@
+/* =========================
+   ページ全体
+========================= */
+.page-container {
+    width: 80%;
+    max-width: 1000px;
+    /* PC で広がりすぎないように調整 */
+    padding: 0 16px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2f3e55;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   ページヘッダー
+========================= */
+.page-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.page-header form {
+    margin-left: auto;
+}
+
+/* =========================
+   PC 用の調整（共通）
+========================= */
+@media (min-width: 768px) {
+
+    /* ログインカードなど */
+    .card,
+    .login-card {
+        padding: 40px 50px;
+        max-width: 420px;
+    }
+
+    .title,
+    .login-title {
+        font-size: 28px;
+    }
+
+    /* タスク一覧（PC） */
+    .task-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 24px;
+    }
+
+    /* タスクカード（PC） */
+    .task-card {
+        width: 220px;
+        max-width: 220px;
+        /* PC はカード幅を少し小さくして重なり防止 */
+    }
+}

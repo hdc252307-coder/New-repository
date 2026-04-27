@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+spring:
+  datasource:
+    # 例: jdbc:postgresql://localhost:5432/taskdb
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # 本番は update ではなく validate 推奨（勝手なDDL変更を防ぐ）
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: false
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO

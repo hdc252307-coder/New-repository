@@ -1,0 +1,120 @@
+/* =========================
+   タスク一覧（スマホ）
+========================= */
+.task-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* スマホは1列 */
+    gap: 16px;
+    justify-items: center;
+    width: 100%;
+}
+
+/* =========================
+   おすすめボックス
+========================= */
+.recommend-box {
+    background: #fff8d6;
+    border-left: 4px solid #f4c542;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+.recommend-box h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.recommend-box ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.recommend-box li {
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.recommend-box a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* =========================
+   ログアウトボタン
+========================= */
+.logout-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    background: #e0e7ff;
+    color: #4a5fc1;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #d4dcff;
+}
+
+/* =========================
+   タスクカード（スマホ）
+========================= */
+.task-card {
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: none;
+    /* スマホは幅制限なし */
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 24px;
+}
+
+.task-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2f3e55;
+}
+
+.task-card .priority {
+    font-size: 13px;
+    padding: 3px 8px;
+}
+
+.task-body {
+    margin-top: 10px;
+    color: #6b7a99;
+    font-size: 14px;
+}
+
+.task-deadline,
+.task-time {
+    margin: 0 0 6px 0;
+}
+
+.task-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn.small {
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+/* 新規追加ボタン */
+.add-task-btn {
+    margin-top: 24px;
+    display: block;
+    text-align: center;
+}

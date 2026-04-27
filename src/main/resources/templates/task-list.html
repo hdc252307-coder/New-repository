@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>タスク一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="page-container">
+
+    <!-- ★ page-header 正しく閉じる -->
+    <div class="page-header">
+        <h1 class="page-title">タスク一覧</h1>
+
+        <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+            <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+    </div> <!-- ← ここで確実に閉じる -->
+
+    <!-- おすすめタスク -->
+    <div class="recommend-box" th:if="${not #lists.isEmpty(recommendedTasks)}">
+        <h3>💡 今日のおすすめタスク</h3>
+        <ul>
+            <li th:each="t : ${recommendedTasks}">
+                <a th:href="@{/tasks/{id}(id=${t.id})}" th:text="${t.title}"></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- タスク一覧 -->
+    <div class="task-list">
+        <div th:each="task : ${tasks}" class="task-card">
+
+            <div class="task-header">
+                <span class="task-title" th:text="${task.title}"></span>
+
+                <span class="priority" th:classappend="' p' + ${task.priority}">
+                    <span th:text="${task.priority}"></span>
+                </span>
+            </div>
+
+            <div class="task-body">
+                <p class="task-deadline">
+                    期限：<span th:text="${task.dueDate}"></span>
+                </p>
+                <p class="task-time">
+                    所要時間：<span th:text="${task.estimatedMinutes}"></span> 分
+                </p>
+            </div>
+
+            <div class="task-actions">
+                <a th:href="@{'/tasks/' + ${task.id}}" class="btn small primary">詳細</a>
+                <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn small secondary">編集</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ボタン類 -->
+    <a href="/tasks/new" class="btn primary add-task-btn">＋ 新しいタスク</a>
+    <a href="/calendar" class="btn calendar add-task-btn">カレンダー</a>
+    <a th:href="@{/trash}" class="btn secondary add-task-btn">削除済み一覧</a>
+
+</div>
+
+</body>
+</html>

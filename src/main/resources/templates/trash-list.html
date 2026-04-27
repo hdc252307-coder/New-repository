@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>削除済み一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="page-container">
+
+    <h1 class="page-title">削除済み一覧</h1>
+
+    <!-- 削除データがある場合 -->
+    <div class="task-list" th:if="${trashList != null and trashList.size() > 0}">
+        <div class="task-card" th:each="t : ${trashList}">
+
+            <div class="task-header">
+                <span class="task-title" th:text="${t.title}">タイトル</span>
+
+                <!-- 種類表示（task / schedule） -->
+                <span class="priority p3" style="background:#6b7a99;">
+                    <span th:text="${t.type == 'task' ? 'タスク' : '予定'}"></span>
+                </span>
+            </div>
+
+            <div class="task-body" style="opacity: 0.85;">
+
+                <!-- 削除日時 -->
+                <p class="task-deadline">
+                    削除日時：
+                    <span th:text="${#temporals.format(t.deletedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </p>
+
+                <!-- タスクの場合だけ詳細情報を表示 -->
+                <div th:if="${t.type == 'task'}">
+                    <p>期限：<span th:text="${t.dueDate}"></span></p>
+                    <p>優先度：<span th:text="${t.priority}"></span></p>
+                    <p>所要時間：<span th:text="${t.estimatedMinutes}"></span> 分</p>
+                    <p>説明：<span th:text="${t.description}"></span></p>
+                </div>
+
+            </div>
+
+            <div class="task-actions">
+
+                <!-- ▼ 復元（カレンダーへ戻る） -->
+                <form th:action="@{'/trash/' + ${t.id} + '/restore'}"
+                      method="post" style="display:inline;">
+                    <input type="hidden" name="returnTo" value="/calendar" />
+                    <button type="submit" class="btn primary small">復元する</button>
+                </form>
+
+                <!-- ▼ 完全削除 -->
+                <form th:action="@{'/trash/' + ${t.id} + '/destroy'}"
+                      method="post" style="display:inline; margin-left:8px;"
+                      onsubmit="return confirm('完全に削除します。よろしいですか？');">
+                    <button type="submit" class="btn danger small">完全削除</button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- データが無い場合 -->
+    <p th:if="${trashList == null or trashList.size() == 0}"
+       style="text-align:center; color:#6b7a99;">
+        削除済みのデータはありません
+    </p>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a th:href="@{/tasks}" class="add-task-btn link-text">一覧に戻る</a>
+    </div>
+
+</div>
+
+</body>
+</html>

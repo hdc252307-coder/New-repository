@@ -1,0 +1,296 @@
+/* =========================
+   ボタン（共通）
+========================= */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn,
+.login-btn {
+    display: block;
+    padding: 14px 0;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn.primary,
+.login-btn {
+    background: #5a8fd8;
+    color: white;
+}
+
+.btn.primary:hover,
+.login-btn:hover {
+    background: #4a7fc2;
+}
+
+.btn.secondary {
+    background: #e8edf5;
+    color: #2f3e55;
+}
+
+.btn.secondary:hover {
+    background: #d9e2f0;
+}
+
+/* 危険ボタン */
+.btn.danger {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border-radius: 10px;
+    font-size: 16px;
+    background: #e86a6a;
+    color: white;
+    transition: 0.2s;
+}
+
+.btn.danger:hover {
+    background: #d45a5a;
+}
+
+/* カレンダーボタン */
+.btn.calendar {
+    background: #e0f7ff;
+    color: #0077aa;
+    display: block;
+    text-align: center;
+    padding: 14px 0;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+.btn.calendar:hover {
+    background: #c9efff;
+}
+
+.calendar-add-btn {
+    width: 100%;
+    margin-top: 12px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* =========================
+   フォーム（共通）
+========================= */
+.form-area,
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group,
+.login-form div {
+    text-align: left;
+}
+
+.form-group label,
+.login-form label {
+    display: block;
+    margin-bottom: 6px;
+    color: #2f3e55;
+    font-size: 14px;
+}
+
+.form-group input,
+.login-form input {
+    width: 100%;
+    /* スマホ時に padding 分で親カードをはみ出さないよう border-box を固定する。 */
+    /* これで width:100% が「入力枠全体」で解釈され、背景カード内に収まる。 */
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #cfd7e6;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.form-group input:focus,
+.login-form input:focus {
+    outline: none;
+    border-color: #5a8fd8;
+    box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
+}
+
+/* textarea */
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #cfd7e6;
+    font-size: 15px;
+    resize: vertical;
+    transition: 0.2s;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #5a8fd8;
+    box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
+}
+
+/* カレンダーセルの高さ固定 */
+.day-cell {
+    display: block;
+    height: 100px; /* 好みで調整可能 */
+    padding: 6px;
+    border-radius: 8px;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+}
+
+/* 日付数字 */
+.date-number {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* タスク・スケジュール表示領域 */
+.items {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.2;
+    height: 60px; /* 表示量を制限 */
+    overflow: hidden;
+}
+
+/* タスクとスケジュールのラベル */
+.task-item {
+    color: #2f6fd8;
+}
+
+.schedule-item {
+    color: #2f3e55;
+}
+
+/* 省略記号 */
+.more {
+    color: #999;
+}
+
+/* 編集ボタン（青・小さめ） */
+.btn.edit {
+    background: #6fa8ff;      /* 明るめの青 */
+    color: white;
+    padding: 8px 0;           /* 小さめ */
+    font-size: 14px;          /* 小さめ */
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn.edit:hover {
+    background: #5a8fd8;      /* 既存の青に寄せる */
+}
+
+/* 削除ボタン（赤・小さめ） */
+.btn.delete-small {
+    background: #e86a6a;
+    color: white;
+    padding: 8px 0;           /* 小さめ */
+    font-size: 14px;          /* 小さめ */
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn.delete-small:hover {
+    background: #d45a5a;
+}
+
+/* ▼ ここから追加：横並び＋横幅短めにする */
+
+/* 編集・削除ボタンを中央揃えで横並び */
+.day-buttons {
+    display: flex;
+    justify-content: center;   /* ← 中央揃えの決め手 */
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* ボタンの横幅を短くする（好みで調整） */
+.btn.edit,
+.btn.delete-small {
+    width: 90px;              /* ← 90〜110px で調整OK */
+    text-align: center;        /* ← ボタン内の文字も中央揃え */
+}
+
+
+
+
+
+/* =========================
+   select（input と完全一致）
+========================= */
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    padding-right: 40px; /* 矢印分の余白 */
+    border-radius: 10px;
+    border: 1px solid #cfd7e6;
+    font-size: 15px;
+    background: white;
+    transition: 0.2s;
+
+    /* ネイティブ UI を消す */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #5a8fd8;
+    box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
+}
+
+/* 優先度だけ見た目の幅を強制調整 */
+.priority-group select {
+    width: calc(100% + 27px);
+}
+
+
+/* =========================
+   リンク（共通）
+========================= */
+.link-text,
+.login-link {
+    margin-top: 10px;
+    display: inline-block;
+    font-size: 14px;
+    color: #4a7fc2;
+    text-decoration: none;
+}
+
+.link-text:hover,
+.login-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   優先度カラー
+========================= */
+.priority {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.p1 { background: #d8e7ff; color: #2f6fd8; }
+.p2 { background: #e3d8ff; color: #6a4ad8; }
+.p3 { background: #ffd8d8; color: #d84a4a; }
+.p4 { background: #f0d8ff; color: #b44ad8; }
+.p5 { background: #ead8ff; color: #7a2fd8; }

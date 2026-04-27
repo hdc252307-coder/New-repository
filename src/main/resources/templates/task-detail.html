@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>タスク詳細</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="center-container">
+    <div class="card">
+
+        <h1 class="title">タスク詳細</h1>
+        <p class="subtitle">タスクの内容を確認できます</p>
+
+        <div class="task-body" style="text-align: left; margin-top: 20px;">
+
+            <p><strong>タイトル：</strong>
+                <span th:text="${task.title}"></span>
+            </p>
+
+            <p><strong>説明：</strong><br>
+                <span th:text="${task.description}"></span>
+            </p>
+
+            <p><strong>期限：</strong>
+                <span th:text="${task.dueDate}"></span>
+            </p>
+
+            <p><strong>所要時間：</strong>
+                <span th:text="${task.estimatedMinutes}"></span> 分
+            </p>
+
+            <p><strong>優先度：</strong>
+                <span th:text="${task.priority}"></span>
+            </p>
+
+            <p><strong>作成日時：</strong>
+                <!-- 画面表示は時刻まで不要なので、日付（yyyy-MM-dd）のみ表示する。 -->
+                <span th:text="${#temporals.format(task.createdAt, 'yyyy-MM-dd')}"></span>
+            </p>
+
+            <p><strong>更新日時：</strong>
+                <!-- 作成日時と同じフォーマットにそろえ、一覧性を上げる。 -->
+                <span th:text="${#temporals.format(task.updatedAt, 'yyyy-MM-dd')}"></span>
+            </p>
+
+        </div>
+
+        <div class="button-group" style="margin-top: 30px;">
+            <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn primary">編集する</a>
+            <a th:href="@{/tasks}" class="btn secondary">一覧に戻る</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

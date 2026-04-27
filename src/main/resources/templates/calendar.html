@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>カレンダー</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- 戻るリンク -->
+<div class="calendar-back">
+    <a href="/tasks" class="link-text">← タスク一覧に戻る</a>
+</div>
+
+<div class="calendar-card">
+
+    <div class="calendar-header">
+
+        <a class="nav-btn"
+           th:href="@{/calendar(year=${prevMonth.year}, month=${prevMonth.monthValue})}">
+            ◀
+        </a>
+
+        <h2 class="calendar-title" th:text="${title}">2026年3月</h2>
+
+        <a href="/schedule/new" class="btn primary calendar-add-btn">＋ 新しい予定</a>
+
+
+        <a class="nav-btn"
+           th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}">
+            ▶
+        </a>
+
+    </div>
+
+    <div class="calendar-weekdays">
+        <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+    </div>
+
+    <div class="calendar-grid">
+
+        <!-- ▼ ここが重要：セル全体をリンク化して日別詳細へ -->
+        <!-- a タグの開始をここで閉じないと Thymeleaf のパースエラーで Whitelabel になる -->
+        <a class="day-cell"
+        th:each="date : ${dates}"
+        th:href="@{'/calendar/day?date=' + ${date}}"
+        th:classappend="${date.equals(T(java.time.LocalDate).now()) ? 'today' : ''}">
+
+            <div class="date-number" th:text="${date.dayOfMonth}">1</div>
+
+            <div class="items">
+
+                <!-- タスク（最大2件） -->
+                <div class="task-item"
+                     th:each="t, iter : ${taskMap[date.toString()]}"
+                     th:if="${iter.index < 2}"
+                     th:text="${t.title}">
+                </div>
+
+                <!-- タスクが3件以上なら … -->
+                <div class="more"
+                     th:if="${taskMap[date.toString()] != null and taskMap[date.toString()].size() > 2}">
+                    …
+                </div>
+
+                <!-- スケジュール（最大2件） -->
+                <div class="schedule-item"
+                     th:each="s, sIter : ${scheduleMap[date.toString()]}"
+                     th:if="${sIter.index < 2}"
+                     th:text="${s.title}">
+                </div>
+
+                <!-- スケジュールが3件以上なら … -->
+                <div class="more"
+                     th:if="${scheduleMap[date.toString()] != null and scheduleMap[date.toString()].size() > 2}">
+                    …
+                </div>
+
+            </div>
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>
