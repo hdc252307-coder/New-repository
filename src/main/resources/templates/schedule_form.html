@@ -7,11 +7,10 @@
 </head>
 <body>
 
-<div class="page-container">
-
-    <h1 class="page-title">スケジュール追加</h1>
-
+<div class="center-container">
     <div class="card">
+    <h1 class="title">スケジュール追加</h1>
+    <p class="subtitle">予定を登録してください</p>
 
         <form th:action="@{/schedule/new}" th:object="${schedule}" method="post" class="form-area">
 
@@ -38,10 +37,9 @@
             <button type="submit" class="btn primary">保存</button>
         </form>
 
-        <a href="/calendar" class="btn secondary" style="margin-top: 14px;">戻る</a>
+        <a href="/calendar" class="link-text">カレンダーに戻る</a>
 
     </div>
-
 </div>
 
 </body>
