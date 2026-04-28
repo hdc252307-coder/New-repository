@@ -40,7 +40,7 @@ public class TrashController {
     {
         if (userDetails == null) return "redirect:/login";
 
-        trashService.restore(id);
+        trashService.restore(id, userDetails.getUser().getUsername());
         return "redirect:/trash";
     }
 
@@ -54,7 +54,7 @@ public class TrashController {
     {
         if (userDetails == null) return "redirect:/login";
 
-        trashService.deleteForever(id);
+        trashService.deleteForever(id, userDetails.getUser().getUsername());
         return "redirect:/trash";
     }
 }

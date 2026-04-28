@@ -7,12 +7,15 @@
 </head>
 <body>
 
-<div class="page-container">
+<div class="page-container task-list-page">
 
     <!-- ★ page-header 正しく閉じる -->
-    <div class="page-header">
-        <h1 class="page-title">タスク一覧</h1>
-
+    <div class="page-header task-list-header">
+        <a href="/guide" class="help-bubble">使い方</a>
+        <div class="header-center">
+            <h1 class="page-title">タスク一覧</h1>
+            <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+        </div>
         <form th:action="@{/logout}" method="post" style="margin-left:auto;">
             <button type="submit" class="logout-btn">ログアウト</button>
         </form>
@@ -52,6 +55,10 @@
             <div class="task-actions">
                 <a th:href="@{'/tasks/' + ${task.id}}" class="btn small primary">詳細</a>
                 <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn small secondary">編集</a>
+                <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" style="display:inline;">
+                    <button type="submit" class="btn small secondary"
+                            th:text="${task.done} ? '未完了' : '完了'"></button>
+                </form>
             </div>
 
         </div>
@@ -59,6 +66,7 @@
 
     <!-- ボタン類 -->
     <a href="/tasks/new" class="btn primary add-task-btn">＋ 新しいタスク</a>
+    <a href="/tasks/completed" class="btn secondary add-task-btn">完了済みタスク</a>
     <a href="/calendar" class="btn calendar add-task-btn">カレンダー</a>
     <a th:href="@{/trash}" class="btn secondary add-task-btn">削除済み一覧</a>
 

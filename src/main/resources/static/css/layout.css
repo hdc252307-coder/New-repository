@@ -3,7 +3,7 @@
 ========================= */
 .page-container {
     width: 80%;
-    max-width: 1000px;
+    max-width: 1200px;
     /* PC で広がりすぎないように調整 */
     padding: 0 16px;
     margin: 0 auto;
@@ -34,6 +34,77 @@
 }
 
 /* =========================
+   モバイル調整（viewport なし運用）
+========================= */
+@media (max-width: 767px), (max-device-width: 767px) {
+    .page-container {
+        width: 100%;
+        max-width: 620px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 16px 20px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 27px;
+        text-align: center;
+    }
+
+    .title,
+    .login-title {
+        font-size: 30px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .page-header {
+        justify-content: center;
+        text-align: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .page-header form {
+        margin-left: 0;
+    }
+
+    .card,
+    .login-card {
+        max-width: 620px;
+        min-height: 520px;
+        margin: 0 auto;
+    }
+
+    .button-group,
+    .task-actions,
+    .day-buttons {
+        justify-content: center;
+    }
+
+    .form-group,
+    .login-form div {
+        text-align: left;
+    }
+
+    .task-list-page {
+        max-width: 100%;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 12px 20px;
+    }
+}
+
+/* =========================
    PC 用の調整（共通）
 ========================= */
 @media (min-width: 768px) {
@@ -42,7 +113,8 @@
     .card,
     .login-card {
         padding: 40px 50px;
-        max-width: 420px;
+        max-width: 620px;
+        min-height: 520px;
     }
 
     .title,

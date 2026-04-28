@@ -13,6 +13,11 @@ public class HomeController
     {
         return "index";
     }
+
+    @GetMapping("/guide")
+    public String guide() {
+        return "usage-guide";
+    }
 }
 
     

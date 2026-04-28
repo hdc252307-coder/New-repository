@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>完了済みタスク</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="page-container list-page"
+     th:classappend="${#lists.size(tasks) <= 4} ? ' center-mode' : ' top-mode'">
+    <div class="page-header">
+        <h1 class="page-title">完了済みタスク</h1>
+        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+    </div>
+
+    <p th:if="${#lists.isEmpty(tasks)}" style="text-align:center; color:#6b7a99;">
+        完了済みタスクはありません
+    </p>
+
+    <div class="task-list" th:if="${not #lists.isEmpty(tasks)}">
+        <div th:each="task : ${tasks}" class="task-card">
+            <div class="task-header">
+                <span class="task-title" th:text="${task.title}"></span>
+                <span class="priority" th:classappend="' p' + ${task.priority}">
+                    <span th:text="${task.priority == 1 ? '1(低)' : (task.priority == 3 ? '3(中)' : (task.priority == 5 ? '5(高)' : task.priority))}"></span>
+                </span>
+            </div>
+            <div class="task-body">
+                <p class="task-deadline">期限：<span th:text="${task.dueDate}"></span></p>
+                <p class="task-time">完了日時：<span th:text="${task.completedAt != null ? #temporals.format(task.completedAt, 'yyyy-MM-dd HH:mm') : '-'}"></span></p>
+            </div>
+            <div class="task-actions">
+                <a th:href="@{'/tasks/' + ${task.id}}" class="btn small primary">詳細</a>
+                <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" style="display:inline;">
+                    <button type="submit" class="btn small secondary">未完了に戻す</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <a href="/tasks" class="btn secondary add-task-btn">一覧に戻る</a>
+</div>
+
+</body>
+</html>

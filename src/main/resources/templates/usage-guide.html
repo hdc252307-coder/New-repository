@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>使い方ガイド</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="center-container">
+    <div class="card" style="max-width: 720px; text-align: left;">
+        <h1 class="title">使い方ガイド</h1>
+        <p class="subtitle">タスクとスケジュールの使い分け</p>
+
+        <h3>タスク</h3>
+        <p>
+            タスクは、いわゆる「やることリスト」に近い使い方になります。<br>
+            買い物メモや提出物、部屋の片づけみたいに、時間がきっちり決まっていなくても後でやればいいものを入れておくイメージです。<br>
+            優先度や見積もり時間を付けておくと、どれから手をつけるか判断しやすくなります。
+        </p>
+
+        <h3>スケジュール</h3>
+        <p>
+            スケジュールは、日時が決まっている予定を管理するためのものです。<br>
+            デート、会社説明会、会議、通院など、「その時間に行く必要がある予定」を登録します。<br>
+            カレンダー上で前後の予定と一緒に見られるので、予定の重なりや移動時間も確認しやすくなります。
+        </p>
+
+        <h3>使い分けの目安</h3>
+        <ul>
+            <li>「何をやるか」を管理したい: タスク</li>
+            <li>「いつやるか」が決まっている: スケジュール</li>
+            <li>例：会社説明会に参加する（スケジュール）＋事前にESを直す（タスク）</li>
+        </ul>
+
+        <div class="button-group" style="margin-top: 24px;">
+            <a href="/tasks" class="btn primary" style="text-align: center;">タスク一覧へ</a>
+            <a href="/calendar" class="btn secondary" style="text-align: center;">カレンダーへ</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

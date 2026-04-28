@@ -6,6 +6,21 @@ body {
     padding: 0;
     font-family: "Segoe UI", "Noto Sans JP", sans-serif;
     background: #f3f6fb;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(243, 246, 251, 0.68), rgba(243, 246, 251, 0.68)),
+        url("/office-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
 }
 
 /* =========================

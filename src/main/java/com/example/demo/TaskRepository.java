@@ -3,6 +3,7 @@ package com.example.demo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -19,6 +20,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     // おすすめタスク用（未完了タスク）
     List<Task> findByUsernameAndDoneFalse(String username);
+    List<Task> findByUsernameAndDoneTrue(String username);
+    List<Task> findByDoneTrueAndCompletedAtLessThanEqual(LocalDateTime cutoff);
 
     // 1日のタスク取得（DayController 用）
     List<Task> findByUsernameAndDueDate(String username, LocalDate dueDate);

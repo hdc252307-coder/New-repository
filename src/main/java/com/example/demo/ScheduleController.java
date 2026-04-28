@@ -180,6 +180,9 @@ public class ScheduleController {
         if (userDetails == null) return "redirect:/login";
 
         String username = userDetails.getUser().getUsername();
+        Schedule schedule = scheduleRepository.findById(id).orElse(null);
+        if (schedule == null) return "redirect:/calendar";
+        if (!schedule.getUser().getUsername().equals(username)) return "redirect:/calendar";
         trashService.moveToTrash("schedule", id, username);
 
         return "redirect:/calendar";

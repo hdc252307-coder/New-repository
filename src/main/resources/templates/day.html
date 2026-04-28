@@ -8,6 +8,7 @@
 
 <body>
 
+<div class="day-page">
 <div class="day-card">
 
     <div class="day-header">
@@ -30,8 +31,8 @@
                 <div class="item-title" th:text="${t.title}"></div>
 
                 <div class="item-meta">
-                    <span th:text="'優先度: ' + ${t.priority}"></span>
-                    <span th:text="'見積: ' + ${t.estimatedMinutes} + '分'"></span>
+                    <span th:text="${'優先度: ' + (t.priority == 1 ? '1(低)' : (t.priority == 3 ? '3(中)' : (t.priority == 5 ? '5(高)' : t.priority)))}"></span>
+                    <span th:text="${'見積: ' + t.estimatedMinutes + '分'}"></span>
                 </div>
 
                 <div class="day-buttons">
@@ -39,6 +40,11 @@
                     <!-- 編集 -->
                     <a th:href="@{'/tasks/' + ${t.id} + '/edit?returnTo=/calendar/day%3Fdate=' + ${date}}"
                        class="btn edit">編集</a>
+
+                    <form th:action="@{'/tasks/' + ${t.id} + '/toggle-complete'}" method="post">
+                        <button type="submit" class="btn edit"
+                                th:text="${t.done} ? '未完了' : '完了'"></button>
+                    </form>
 
                     <!-- 削除（CSRF 無効化中なので hidden 不要） -->
                     <form th:action="@{'/tasks/' + ${t.id} + '/delete'}" method="post">
@@ -66,7 +72,7 @@
                 <div class="item-title" th:text="${schedule.title}"></div>
 
                 <div class="item-meta"
-                    th:text="${#temporals.format(schedule.startDateTime, 'HH:mm')} + ' 〜 ' + ${#temporals.format(schedule.endDateTime, 'HH:mm')}">
+                    th:text="${#temporals.format(schedule.startDateTime, 'HH:mm') + ' 〜 ' + #temporals.format(schedule.endDateTime, 'HH:mm')}">
                 </div>
 
                 <div class="day-buttons">
@@ -87,6 +93,7 @@
 
     </section>
 
+</div>
 </div>
 
 </body>

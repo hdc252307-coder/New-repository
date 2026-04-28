@@ -7,7 +7,8 @@
 </head>
 <body>
 
-<div class="page-container">
+<div class="page-container list-page"
+     th:classappend="${trashList != null and trashList.size() <= 4} ? ' center-mode' : ' top-mode'">
 
     <h1 class="page-title">削除済み一覧</h1>
 
@@ -35,7 +36,7 @@
                 <!-- タスクの場合だけ詳細情報を表示 -->
                 <div th:if="${t.type == 'task'}">
                     <p>期限：<span th:text="${t.dueDate}"></span></p>
-                    <p>優先度：<span th:text="${t.priority}"></span></p>
+                    <p>優先度：<span th:text="${t.priority == 1 ? '1(低)' : (t.priority == 3 ? '3(中)' : (t.priority == 5 ? '5(高)' : t.priority))}"></span></p>
                     <p>所要時間：<span th:text="${t.estimatedMinutes}"></span> 分</p>
                     <p>説明：<span th:text="${t.description}"></span></p>
                 </div>

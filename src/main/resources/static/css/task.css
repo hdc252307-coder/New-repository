@@ -59,8 +59,56 @@
     background: #d4dcff;
 }
 
+.task-list-header {
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 96px;
+    margin-bottom: 14px;
+}
+
+.task-list-header form {
+    position: absolute;
+    right: 0;
+    top: 6px;
+    margin-left: 0;
+}
+
+.header-center {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.header-center .page-title {
+    margin-bottom: 8px;
+}
+
+.help-bubble {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 6px;
+    background: #fff8d6;
+    color: #7a5a00;
+    border: 1px solid #f4c542;
+    border-radius: 14px;
+    padding: 6px 10px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.help-bubble:hover {
+    background: #ffefb3;
+}
+
 /* =========================
-   タスクカード（スマホ）
+   タスクカード（共通）
 ========================= */
 .task-card {
     background: #ffffff;
@@ -68,8 +116,6 @@
     border-radius: 16px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: none;
-    /* スマホは幅制限なし */
 }
 
 .task-header {
@@ -80,7 +126,7 @@
 }
 
 .task-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: #2f3e55;
 }
@@ -93,7 +139,7 @@
 .task-body {
     margin-top: 10px;
     color: #6b7a99;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .task-deadline,
@@ -105,16 +151,127 @@
     margin-top: 14px;
     display: flex;
     gap: 10px;
+    justify-content: center;
+}
+
+.task-actions form {
+    margin: 0;
 }
 
 .btn.small {
-    padding: 8px 0;
-    font-size: 14px;
+    padding: 10px 0;
+    font-size: 15px;
 }
 
 /* 新規追加ボタン */
 .add-task-btn {
     margin-top: 24px;
-    display: block;
+    display: inline-block;
+    min-width: 220px;
+    width: auto;
     text-align: center;
+}
+
+.task-list-page .task-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8px;
+}
+
+.task-list-page .task-header {
+    position: relative;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.task-list-page .task-title {
+    width: 100%;
+    padding-right: 40px; /* 優先度バッジ分の逃げ */
+    text-align: center;
+    line-height: 1.25;
+    font-size: clamp(15px, 2.8vw, 19px);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.task-list-page .task-card .priority {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    top: auto;
+}
+
+.task-list-page .recommend-box {
+    width: 100%;
+    max-width: 640px;
+    margin: 20px auto;
+    box-sizing: border-box;
+    padding: 16px 18px;
+    border-radius: 10px;
+}
+
+.task-list-page .recommend-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.task-list-page .recommend-box li {
+    text-align: center;
+    word-break: break-word;
+}
+
+.task-list-page .add-task-btn {
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 14px;
+    box-sizing: border-box;
+    padding: 14px 0;
+    font-size: 16px;
+}
+
+@media (max-width: 767px), (max-device-width: 767px) {
+    .task-list-header {
+        flex-wrap: nowrap;
+    }
+}
+
+.list-page .task-list {
+    width: 100%;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.list-page .add-task-btn {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.list-page.center-mode {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.list-page.top-mode {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }

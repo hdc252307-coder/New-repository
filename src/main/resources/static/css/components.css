@@ -7,6 +7,15 @@
     gap: 14px;
 }
 
+.full-width-form {
+    width: 100%;
+    margin: 0;
+}
+
+.full-width-form .btn {
+    width: 100%;
+}
+
 .btn,
 .login-btn {
     display: block;
@@ -276,6 +285,14 @@
 .link-text:hover,
 .login-link:hover {
     text-decoration: underline;
+}
+
+.user-badge {
+    background: #e8edf5;
+    color: #2f3e55;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 13px;
 }
 
 /* =========================

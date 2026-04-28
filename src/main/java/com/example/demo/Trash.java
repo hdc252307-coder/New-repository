@@ -28,6 +28,7 @@ public class Trash {
     @Column(length = 5000)
     private String description;
     private Boolean done;
+    private LocalDateTime taskCompletedAt;
 
     // ★ 完全復元用（Task）
     private LocalDateTime taskCreatedAt;
@@ -75,6 +76,9 @@ public class Trash {
 
     public Boolean getDone() { return done; }
     public void setDone(Boolean done) { this.done = done; }
+
+    public LocalDateTime getTaskCompletedAt() { return taskCompletedAt; }
+    public void setTaskCompletedAt(LocalDateTime taskCompletedAt) { this.taskCompletedAt = taskCompletedAt; }
 
     public LocalDateTime getTaskCreatedAt() { return taskCreatedAt; }
     public void setTaskCreatedAt(LocalDateTime taskCreatedAt) { this.taskCreatedAt = taskCreatedAt; }

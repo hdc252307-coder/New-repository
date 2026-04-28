@@ -5,15 +5,23 @@
     <title>タスク追加</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="page-container">
+<body>
 
-<h2 class="page-title">タスク追加</h2>
+<div class="center-container">
+<div class="card">
+<h1 class="title">タスク追加</h1>
+<p class="subtitle">やることを登録してください</p>
 
 <form method="post" action="/tasks/add" class="form-area">
 
     <div class="form-group">
         <label>タイトル</label>
         <input type="text" name="title" required>
+    </div>
+
+    <div class="form-group">
+        <label>詳細</label>
+        <textarea name="description" rows="3"></textarea>
     </div>
 
     <div class="form-group">
@@ -24,11 +32,11 @@
     <div class="form-group priority-group">
         <label>優先度</label>
         <select name="priority">
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
+            <option value="1">1(低)</option>
             <option value="2">2</option>
-            <option value="1">1</option>
+            <option value="3" selected>3(中)</option>
+            <option value="4">4</option>
+            <option value="5">5(高)</option>
         </select>
     </div>
 
@@ -41,9 +49,9 @@
     <button type="submit" class="btn primary">追加</button>
 </form>
 
-<div class="back" style="text-align:center; margin-top:15px;">
-    <a href="/tasks" class="link-text">← タスク一覧に戻る</a>
-</div>
+<a href="/tasks" class="link-text">タスク一覧に戻る</a>
 
+</div>
+</div>
 </body>
 </html>

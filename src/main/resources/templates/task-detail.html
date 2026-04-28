@@ -32,7 +32,7 @@
             </p>
 
             <p><strong>優先度：</strong>
-                <span th:text="${task.priority}"></span>
+                <span th:text="${task.priority == 1 ? '1(低)' : (task.priority == 3 ? '3(中)' : (task.priority == 5 ? '5(高)' : task.priority))}"></span>
             </p>
 
             <p><strong>作成日時：</strong>
@@ -49,6 +49,10 @@
 
         <div class="button-group" style="margin-top: 30px;">
             <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn primary">編集する</a>
+            <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" class="full-width-form">
+                <button type="submit" class="btn secondary"
+                        th:text="${task.done} ? '未完了に戻す' : '完了にする'"></button>
+            </form>
             <a th:href="@{/tasks}" class="btn secondary">一覧に戻る</a>
         </div>
 

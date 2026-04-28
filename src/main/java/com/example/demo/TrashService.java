@@ -47,6 +47,9 @@ public class TrashService {
         {
             Task task = taskRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Task not found"));
+            if (!task.getUsername().equals(username)) {
+                throw new RuntimeException("Forbidden");
+            }
 
             trash.setTitle(task.getTitle());
             trash.setDueDate(task.getDueDate());
@@ -54,6 +57,7 @@ public class TrashService {
             trash.setEstimatedMinutes(task.getEstimatedMinutes());
             trash.setDescription(task.getDescription());
             trash.setDone(task.getDone());
+            trash.setTaskCompletedAt(task.getCompletedAt());
 
             trash.setTaskCreatedAt(task.getCreatedAt());
             trash.setTaskUpdatedAt(task.getUpdatedAt());
@@ -65,6 +69,9 @@ public class TrashService {
         {
             Schedule schedule = scheduleRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Schedule not found"));
+            if (!schedule.getUser().getUsername().equals(username)) {
+                throw new RuntimeException("Forbidden");
+            }
 
             trash.setTitle(schedule.getTitle());
             trash.setDescription(schedule.getDescription());
@@ -81,11 +88,14 @@ public class TrashService {
     }
 
     // ▼ 削除一覧から復元
-    public void restore(Long trashId) 
+    public void restore(Long trashId, String username) 
     
     {
         Trash trash = trashRepository.findById(trashId)
                 .orElseThrow(() -> new RuntimeException("Trash not found"));
+        if (!trash.getUsername().equals(username)) {
+            throw new RuntimeException("Forbidden");
+        }
 
         if (trash.getType().equals("task")) 
 
@@ -102,6 +112,7 @@ public class TrashService {
             task.setEstimatedMinutes(trash.getEstimatedMinutes());
             task.setDescription(trash.getDescription());
             task.setDone(trash.getDone());
+            task.setCompletedAt(trash.getTaskCompletedAt());
 
             task.setCreatedAt(trash.getTaskCreatedAt());
             task.setUpdatedAt(trash.getTaskUpdatedAt());
@@ -131,9 +142,25 @@ public class TrashService {
     }
 
     // ▼ 完全削除
-    public void deleteForever(Long trashId) 
+    public void deleteForever(Long trashId, String username) 
     
     {
+        Trash trash = trashRepository.findById(trashId)
+                .orElseThrow(() -> new RuntimeException("Trash not found"));
+        if (!trash.getUsername().equals(username)) {
+            throw new RuntimeException("Forbidden");
+        }
         trashRepository.deleteById(trashId);
+    }
+
+    public List<Trash> findExpiredTrash(LocalDateTime cutoff) {
+        return trashRepository.findByDeletedAtLessThanEqual(cutoff);
+    }
+
+    public void moveExpiredSchedulesToTrash(LocalDateTime now) {
+        List<Schedule> expiredSchedules = scheduleRepository.findByEndDateTimeBefore(now);
+        for (Schedule schedule : expiredSchedules) {
+            moveToTrash("schedule", schedule.getId(), schedule.getUser().getUsername());
+        }
     }
 }

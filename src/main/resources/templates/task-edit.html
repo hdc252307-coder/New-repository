@@ -42,11 +42,11 @@
             <div class="form-group">
                 <label>優先度</label>
                 <select name="priority" required>
-                    <option value="5" th:selected="${task.priority == 5}">高</option>
-                    <option value="4" th:selected="${task.priority == 4}">高</option>
-                    <option value="3" th:selected="${task.priority == 3}">中</option>
-                    <option value="2" th:selected="${task.priority == 2}">低</option>
-                    <option value="1" th:selected="${task.priority == 1}">低</option>
+                    <option value="1" th:selected="${task.priority == 1}">1(低)</option>
+                    <option value="2" th:selected="${task.priority == 2}">2</option>
+                    <option value="3" th:selected="${task.priority == 3}">3(中)</option>
+                    <option value="4" th:selected="${task.priority == 4}">4</option>
+                    <option value="5" th:selected="${task.priority == 5}">5(高)</option>
                 </select>
             </div>
 
@@ -59,8 +59,6 @@
               onsubmit="return confirm('本当に削除しますか？');"
               style="margin-top: 10px;">
             <button type="submit" class="btn danger small">削除</button>
-        </form>
-
         </form>
 
         <!-- 戻るリンク -->

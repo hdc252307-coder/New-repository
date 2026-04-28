@@ -32,6 +32,7 @@ public class Task {
     private String description;
 
     private Boolean done;
+    private LocalDateTime completedAt;
 
     // ★ LocalDateTime に統一（ここが重要）
     private LocalDateTime createdAt;
@@ -61,6 +62,9 @@ public class Task {
 
     public Boolean getDone() { return done; }
     public void setDone(Boolean done) { this.done = done; }
+
+    public LocalDateTime getCompletedAt() { return completedAt; }
+    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
