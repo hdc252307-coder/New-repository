@@ -30,6 +30,9 @@ public class Schedule {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    @Column(name = "all_day")
+    private Boolean allDay;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -51,6 +54,9 @@ public class Schedule {
 
     public LocalDateTime getEndDateTime() { return endDateTime; }
     public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
+
+    public Boolean getAllDay() { return allDay; }
+    public void setAllDay(Boolean allDay) { this.allDay = allDay; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

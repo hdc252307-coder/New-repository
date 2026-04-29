@@ -8,7 +8,8 @@
 <body>
 
 <div class="center-container">
-    <div class="card">
+    <div class="card"
+         th:classappend="${'task-color--' + (task.colorKey != null ? task.colorKey : 'default')}">
 
         <h1 class="title">タスク詳細</h1>
         <p class="subtitle">タスクの内容を確認できます</p>
@@ -33,6 +34,10 @@
 
             <p><strong>優先度：</strong>
                 <span th:text="${task.priority == 1 ? '1(低)' : (task.priority == 3 ? '3(中)' : (task.priority == 5 ? '5(高)' : task.priority))}"></span>
+            </p>
+
+            <p><strong>表示色：</strong>
+                <span th:text="${(task.colorKey != null and task.colorKey != '' and task.colorKey != 'default') ? task.colorKey : '標準'}"></span>
             </p>
 
             <p><strong>作成日時：</strong>

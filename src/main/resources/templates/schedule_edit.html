@@ -8,24 +8,12 @@
 
 <body>
 
-<!-- タスク編集画面と同じレイアウト（center-container + card）に合わせる。
-     これで余白・横幅・カード見た目が共通化され、画面ごとの差異を減らせる。 -->
 <div class="center-container">
 <div class="card">
 <h1 class="title">スケジュール編集</h1>
 <p class="subtitle">内容を修正してください</p>
 
-<!-- タスク編集と同じ form-area を使用して、フォーム部品の間隔・幅を統一する。 -->
 <form th:action="@{'/schedule/' + ${schedule.id} + '/update'}" method="post" class="form-area">
-
-    <!-- ★ id は URL で渡すので hidden は不要（残しても害はないが、整理のため削除） -->
-    <!-- <input type="hidden" name="id" th:value="${schedule.id}"> -->
-
-    <!-- ★ username は Controller 側で userDetails から取得するので不要 -->
-    <!-- <input type="hidden" name="username" th:value="${schedule.username}"> -->
-
-    <!-- ★ returnTo を使わないので削除 -->
-    <!-- <input type="hidden" name="returnTo" th:value="${returnTo}"> -->
 
     <div class="form-group">
         <label>タイトル</label>
@@ -33,20 +21,42 @@
     </div>
 
     <div class="form-group">
+        <label class="remember">
+            <input type="checkbox" name="allDay" value="true" id="allDayToggle"
+                   th:checked="${schedule.allDay != null and schedule.allDay}">
+            <span>終日</span>
+        </label>
+    </div>
+
+    <div class="form-group" id="timedFields">
         <label>開始日時</label>
-        <!-- SpEL では \' ではなく '' でクォートをエスケープする。 -->
-        <!-- datetime-local に合わせるため、T は ''T'' としてリテラル指定する。 -->
-        <input type="datetime-local" name="startDateTime"
+        <input type="datetime-local" name="startDateTime" id="startDateTime"
                th:value="${#temporals.format(schedule.startDateTime, 'yyyy-MM-dd''T''HH:mm')}"
                required>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" id="timedFieldsEnd">
         <label>終了日時</label>
-        <!-- 開始日時と同じ理由で SpEL 互換の書式へ統一。 -->
-        <input type="datetime-local" name="endDateTime"
+        <input type="datetime-local" name="endDateTime" id="endDateTime"
                th:value="${#temporals.format(schedule.endDateTime, 'yyyy-MM-dd''T''HH:mm')}"
                required>
+    </div>
+
+    <div class="form-group" id="alldayFields" style="display:none;">
+        <label>開始日</label>
+        <input type="date" name="startDate" id="startDate"
+               th:value="${allDayStartDate}">
+    </div>
+
+    <div class="form-group" id="alldayFieldsEnd" style="display:none;">
+        <label>終了日（その日を含む）</label>
+        <input type="date" name="endDate" id="endDate"
+               th:value="${allDayEndDate}">
+    </div>
+
+    <div class="form-group">
+        <label>メモ</label>
+        <textarea name="description" rows="3" th:text="${schedule.description}"></textarea>
     </div>
 
     <button type="submit" class="btn primary">更新する</button>
@@ -56,6 +66,33 @@
 
 </div>
 </div>
+
+<script>
+(function () {
+    var cb = document.getElementById('allDayToggle');
+    var timed = document.getElementById('timedFields');
+    var timedEnd = document.getElementById('timedFieldsEnd');
+    var allday = document.getElementById('alldayFields');
+    var alldayEnd = document.getElementById('alldayFieldsEnd');
+    var st = document.getElementById('startDateTime');
+    var en = document.getElementById('endDateTime');
+    var sd = document.getElementById('startDate');
+    var ed = document.getElementById('endDate');
+    function sync() {
+        var on = cb.checked;
+        timed.style.display = on ? 'none' : '';
+        timedEnd.style.display = on ? 'none' : '';
+        allday.style.display = on ? '' : 'none';
+        alldayEnd.style.display = on ? '' : 'none';
+        if (st) st.required = !on;
+        if (en) en.required = !on;
+        if (sd) sd.required = on;
+        if (ed) ed.required = on;
+    }
+    cb.addEventListener('change', sync);
+    sync();
+})();
+</script>
 
 </body>
 </html>

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -38,9 +39,13 @@ public class TaskController {
         // ★ deleted フラグ廃止 → 全タスク取得（Trash に移動したものは物理削除されている）
         List<Task> tasks = taskRepository.findByUsernameAndDoneFalse(username);
 
-        // ソートロジックは現在未使用。必要になったら再導入する。
+        tasks = tasks.stream()
+                .sorted(taskDisplayComparator())
+                .toList();
+
         model.addAttribute("tasks", tasks);
         model.addAttribute("username", username);
+        model.addAttribute("today", LocalDate.now());
         model.addAttribute("recommendedTasks", taskService.getRecommendedTasks(username));
 
         return "task-list";
@@ -67,7 +72,8 @@ public class TaskController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String dueDate,
             @RequestParam int priority,
-            @RequestParam int estimatedMinutes
+            @RequestParam int estimatedMinutes,
+            @RequestParam(required = false, defaultValue = "default") String colorKey
     )
     {
         if (userDetails == null) return "redirect:/login";
@@ -87,6 +93,7 @@ public class TaskController {
 
         task.setDone(false);
         task.setCompletedAt(null);
+        task.setColorKey(TaskColorKeys.normalize(colorKey));
         task.setUsername(username);
         task.setCreatedAt(LocalDateTime.now());
         task.setUpdatedAt(LocalDateTime.now());
@@ -141,7 +148,8 @@ public class TaskController {
             @RequestParam(required = false) String description,
             @RequestParam String dueDate,
             @RequestParam int priority,
-            @RequestParam int estimatedMinutes
+            @RequestParam int estimatedMinutes,
+            @RequestParam(required = false, defaultValue = "default") String colorKey
     )
     {
         if (userDetails == null) return "redirect:/login";
@@ -155,6 +163,7 @@ public class TaskController {
         task.setPriority(priority);
         task.setEstimatedMinutes(estimatedMinutes);
         task.setDueDate(LocalDate.parse(dueDate));
+        task.setColorKey(TaskColorKeys.normalize(colorKey));
         task.setUpdatedAt(LocalDateTime.now());
 
         taskRepository.save(task);
@@ -212,5 +221,13 @@ public class TaskController {
         model.addAttribute("tasks", taskRepository.findByUsernameAndDoneTrue(username));
         model.addAttribute("username", username);
         return "task-completed";
+    }
+
+    private Comparator<Task> taskDisplayComparator() {
+        return Comparator
+                .comparing(Task::getPriority, Comparator.reverseOrder())
+                .thenComparing(Task::getEstimatedMinutes, Comparator.reverseOrder())
+                .thenComparing(Task::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Task::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
     }
 }

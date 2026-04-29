@@ -33,6 +33,13 @@
     margin-left: auto;
 }
 
+.title-user-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
 /* =========================
    モバイル調整（viewport なし運用）
 ========================= */
@@ -120,6 +127,21 @@
     .title,
     .login-title {
         font-size: 28px;
+    }
+
+    .center-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .center-container .card {
+        min-height: auto;
+        max-width: 520px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     /* タスク一覧（PC） */

@@ -34,6 +34,10 @@ public class Task {
     private Boolean done;
     private LocalDateTime completedAt;
 
+    /** 表示色プリセット（default / blue / teal …）。暗号化不要。 */
+    @Column(name = "color_key", length = 32)
+    private String colorKey;
+
     // ★ LocalDateTime に統一（ここが重要）
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -71,4 +75,7 @@ public class Task {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getColorKey() { return colorKey; }
+    public void setColorKey(String colorKey) { this.colorKey = colorKey; }
 }

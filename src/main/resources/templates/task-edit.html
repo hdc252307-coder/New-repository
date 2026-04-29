@@ -50,6 +50,8 @@
                 </select>
             </div>
 
+            <div th:replace="~{fragments/task-color-fields :: swatches(selectedKey=${task.colorKey != null ? task.colorKey : 'default'})}"></div>
+
             <button type="submit" class="btn primary">更新する</button>
         </form>
 

@@ -34,6 +34,9 @@ public class Trash {
     private LocalDateTime taskCreatedAt;
     private LocalDateTime taskUpdatedAt;
 
+    @Column(name = "task_color_key", length = 32)
+    private String taskColorKey;
+
     // ▼ Schedule の復元に必要なフィールド
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -41,6 +44,9 @@ public class Trash {
     // ★ 完全復元用（Schedule）
     private LocalDateTime scheduleCreatedAt;
     private LocalDateTime scheduleUpdatedAt;
+
+    @Column(name = "schedule_all_day")
+    private Boolean scheduleAllDay;
 
     // --- Getter / Setter ---
 
@@ -86,6 +92,9 @@ public class Trash {
     public LocalDateTime getTaskUpdatedAt() { return taskUpdatedAt; }
     public void setTaskUpdatedAt(LocalDateTime taskUpdatedAt) { this.taskUpdatedAt = taskUpdatedAt; }
 
+    public String getTaskColorKey() { return taskColorKey; }
+    public void setTaskColorKey(String taskColorKey) { this.taskColorKey = taskColorKey; }
+
     public LocalDateTime getStartDateTime() { return startDateTime; }
     public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
 
@@ -97,4 +106,7 @@ public class Trash {
 
     public LocalDateTime getScheduleUpdatedAt() { return scheduleUpdatedAt; }
     public void setScheduleUpdatedAt(LocalDateTime scheduleUpdatedAt) { this.scheduleUpdatedAt = scheduleUpdatedAt; }
+
+    public Boolean getScheduleAllDay() { return scheduleAllDay; }
+    public void setScheduleAllDay(Boolean scheduleAllDay) { this.scheduleAllDay = scheduleAllDay; }
 }

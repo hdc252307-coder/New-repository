@@ -9,38 +9,81 @@
 
 <div class="center-container">
     <div class="card">
-    <h1 class="title">スケジュール追加</h1>
-    <p class="subtitle">予定を登録してください</p>
+        <h1 class="title">スケジュール追加</h1>
+        <p class="subtitle">予定を登録してください</p>
 
-        <form th:action="@{/schedule/new}" th:object="${schedule}" method="post" class="form-area">
+        <form th:action="@{/schedule/new}" method="post" class="form-area">
 
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" th:field="*{title}" required>
+                <input type="text" name="title" required>
             </div>
 
             <div class="form-group">
+                <label class="remember">
+                    <input type="checkbox" name="allDay" value="true" id="allDayToggle">
+                    <span>終日</span>
+                </label>
+            </div>
+
+            <div class="form-group" id="timedFields">
                 <label>開始日時</label>
-                <input type="datetime-local" th:field="*{startDateTime}" required>
+                <input type="datetime-local" name="startDateTime" id="startDateTime">
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="timedFieldsEnd">
                 <label>終了日時</label>
-                <input type="datetime-local" th:field="*{endDateTime}">
+                <input type="datetime-local" name="endDateTime" id="endDateTime">
+            </div>
+
+            <div class="form-group" id="alldayFields" style="display:none;">
+                <label>開始日</label>
+                <input type="date" name="startDate" id="startDate">
+            </div>
+
+            <div class="form-group" id="alldayFieldsEnd" style="display:none;">
+                <label>終了日（その日を含む）</label>
+                <input type="date" name="endDate" id="endDate">
             </div>
 
             <div class="form-group">
                 <label>メモ</label>
-                <textarea th:field="*{description}" rows="3"></textarea>
+                <textarea name="description" rows="3"></textarea>
             </div>
 
             <button type="submit" class="btn primary">保存</button>
         </form>
 
         <a href="/calendar" class="link-text">カレンダーに戻る</a>
-
     </div>
 </div>
+
+<script>
+(function () {
+    var cb = document.getElementById('allDayToggle');
+    var timed = document.getElementById('timedFields');
+    var timedEnd = document.getElementById('timedFieldsEnd');
+    var allday = document.getElementById('alldayFields');
+    var alldayEnd = document.getElementById('alldayFieldsEnd');
+    var st = document.getElementById('startDateTime');
+    var en = document.getElementById('endDateTime');
+    var sd = document.getElementById('startDate');
+    var ed = document.getElementById('endDate');
+    function sync() {
+        var on = cb.checked;
+        timed.style.display = on ? 'none' : '';
+        timedEnd.style.display = on ? 'none' : '';
+        allday.style.display = on ? '' : 'none';
+        alldayEnd.style.display = on ? '' : 'none';
+        if (st) st.required = !on;
+        if (en) en.required = !on;
+        if (sd) sd.required = on;
+        if (ed) ed.required = on;
+    }
+    cb.addEventListener('change', sync);
+    sync();
+})();
+</script>
 
 </body>
 </html>

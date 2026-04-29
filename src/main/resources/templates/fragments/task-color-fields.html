@@ -1,0 +1,43 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="swatches (selectedKey)">
+    <div class="form-group">
+        <label>表示色（一覧・カレンダー）</label>
+        <div class="color-swatches">
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="default"
+                       th:checked="${selectedKey == null or selectedKey == '' or selectedKey == 'default'}">
+                <span class="swatch-dot default"></span>
+                <span>標準</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="blue" th:checked="${selectedKey == 'blue'}">
+                <span class="swatch-dot blue"></span>
+                <span>青</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="teal" th:checked="${selectedKey == 'teal'}">
+                <span class="swatch-dot teal"></span>
+                <span>青緑</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="amber" th:checked="${selectedKey == 'amber'}">
+                <span class="swatch-dot amber"></span>
+                <span>黄</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="rose" th:checked="${selectedKey == 'rose'}">
+                <span class="swatch-dot rose"></span>
+                <span>赤</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="violet" th:checked="${selectedKey == 'violet'}">
+                <span class="swatch-dot violet"></span>
+                <span>紫</span>
+            </label>
+            <label class="color-swatch">
+                <input type="radio" name="colorKey" value="slate" th:checked="${selectedKey == 'slate'}">
+                <span class="swatch-dot slate"></span>
+                <span>灰</span>
+            </label>
+        </div>
+    </div>
+</div>

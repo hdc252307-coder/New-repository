@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -42,11 +41,9 @@ public class ScheduleController {
         LocalDate start = LocalDate.of(y, m, 1);
         LocalDate end = start.plusMonths(1).minusDays(1);
 
-        List<Schedule> schedules = scheduleRepository.findByUserUsernameAndStartDateTimeBetween(
-        username,
-        start.atStartOfDay(),
-        end.atTime(LocalTime.MAX)
-        );
+        LocalDateTime rangeStart = start.atStartOfDay();
+        LocalDateTime rangeEndExclusive = end.plusDays(1).atStartOfDay();
+        List<Schedule> schedules = scheduleRepository.findOverlapping(username, rangeStart, rangeEndExclusive);
 
         model.addAttribute("schedules", schedules);
         model.addAttribute("year", y);
@@ -75,20 +72,49 @@ public class ScheduleController {
             @AuthenticationPrincipal MyUserDetails userDetails,
             @RequestParam String title,
             @RequestParam(required = false) String description,
-            @RequestParam String startDateTime,
-            @RequestParam String endDateTime
-    ) 
-            
-    {
+            @RequestParam(required = false) String allDay,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String startDateTime,
+            @RequestParam(required = false) String endDateTime
+    ) {
         if (userDetails == null) return "redirect:/login";
+
+        boolean isAllDay = "true".equalsIgnoreCase(allDay) || "on".equalsIgnoreCase(allDay);
+        LocalDateTime start;
+        LocalDateTime end;
+        try {
+            if (isAllDay) {
+                if (startDate == null || startDate.isBlank() || endDate == null || endDate.isBlank()) {
+                    return "redirect:/schedule/new";
+                }
+                LocalDateTime[] range = ScheduleAllDaySupport.normalizeAllDayRange(
+                        LocalDate.parse(startDate),
+                        LocalDate.parse(endDate));
+                start = range[0];
+                end = range[1];
+            } else {
+                if (startDateTime == null || startDateTime.isBlank()
+                        || endDateTime == null || endDateTime.isBlank()) {
+                    return "redirect:/schedule/new";
+                }
+                start = LocalDateTime.parse(startDateTime);
+                end = LocalDateTime.parse(endDateTime);
+                if (end.isBefore(start)) {
+                    return "redirect:/schedule/new";
+                }
+            }
+        } catch (Exception e) {
+            return "redirect:/schedule/new";
+        }
 
         Schedule schedule = new Schedule();
         schedule.setTitle(title);
         schedule.setDescription(description);
-        // DB制約に合わせて User エンティティを保存し、FK には user.id が入る。
         schedule.setUser(userDetails.getUser());
-        schedule.setStartDateTime(LocalDateTime.parse(startDateTime));
-        schedule.setEndDateTime(LocalDateTime.parse(endDateTime));
+        schedule.setStartDateTime(start);
+        schedule.setEndDateTime(end);
+        schedule.setAllDay(isAllDay);
         schedule.setCreatedAt(LocalDateTime.now());
         schedule.setUpdatedAt(LocalDateTime.now());
 
@@ -120,6 +146,10 @@ public class ScheduleController {
         }
 
         model.addAttribute("schedule", schedule);
+        model.addAttribute("allDayStartDate",
+                schedule.getStartDateTime() != null ? schedule.getStartDateTime().toLocalDate() : null);
+        model.addAttribute("allDayEndDate", ScheduleAllDaySupport.toInclusiveEndDate(
+                schedule.getStartDateTime(), schedule.getEndDateTime(), schedule.getAllDay()));
 
         return "schedule_edit";
     }
@@ -140,28 +170,54 @@ public class ScheduleController {
             @AuthenticationPrincipal MyUserDetails userDetails,
             @RequestParam String title,
             @RequestParam(required = false) String description,
-            @RequestParam String startDateTime,
-            @RequestParam String endDateTime
-    ) 
-            
-    {
+            @RequestParam(required = false) String allDay,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String startDateTime,
+            @RequestParam(required = false) String endDateTime
+    ) {
         if (userDetails == null) return "redirect:/login";
 
         Schedule schedule = scheduleRepository.findById(id).orElse(null);
         if (schedule == null) return "redirect:/calendar";
 
-        // ★ 所有者チェック（Task と完全同じ）
-        if (!schedule.getUser().getUsername().equals(userDetails.getUser().getUsername())) 
-        
-        
-        {
+        if (!schedule.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
+            return "redirect:/calendar";
+        }
+
+        boolean isAllDay = "true".equalsIgnoreCase(allDay) || "on".equalsIgnoreCase(allDay);
+        LocalDateTime start;
+        LocalDateTime end;
+        try {
+            if (isAllDay) {
+                if (startDate == null || startDate.isBlank() || endDate == null || endDate.isBlank()) {
+                    return "redirect:/calendar";
+                }
+                LocalDateTime[] range = ScheduleAllDaySupport.normalizeAllDayRange(
+                        LocalDate.parse(startDate),
+                        LocalDate.parse(endDate));
+                start = range[0];
+                end = range[1];
+            } else {
+                if (startDateTime == null || startDateTime.isBlank()
+                        || endDateTime == null || endDateTime.isBlank()) {
+                    return "redirect:/calendar";
+                }
+                start = LocalDateTime.parse(startDateTime);
+                end = LocalDateTime.parse(endDateTime);
+                if (end.isBefore(start)) {
+                    return "redirect:/calendar";
+                }
+            }
+        } catch (Exception e) {
             return "redirect:/calendar";
         }
 
         schedule.setTitle(title);
         schedule.setDescription(description);
-        schedule.setStartDateTime(LocalDateTime.parse(startDateTime));
-        schedule.setEndDateTime(LocalDateTime.parse(endDateTime));
+        schedule.setStartDateTime(start);
+        schedule.setEndDateTime(end);
+        schedule.setAllDay(isAllDay);
         schedule.setUpdatedAt(LocalDateTime.now());
 
         scheduleRepository.save(schedule);

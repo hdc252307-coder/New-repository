@@ -25,15 +25,19 @@
     <div class="recommend-box" th:if="${not #lists.isEmpty(recommendedTasks)}">
         <h3>💡 今日のおすすめタスク</h3>
         <ul>
-            <li th:each="t : ${recommendedTasks}">
+            <li th:each="t : ${recommendedTasks}"
+                th:classappend="${t.dueDate != null and t.dueDate.isBefore(today)} ? ' recommend-expired' : ''">
+                <span th:if="${t.dueDate != null and t.dueDate.isBefore(today)}">⚠ </span>
                 <a th:href="@{/tasks/{id}(id=${t.id})}" th:text="${t.title}"></a>
             </li>
         </ul>
     </div>
 
     <!-- タスク一覧 -->
-    <div class="task-list">
-        <div th:each="task : ${tasks}" class="task-card">
+    <div class="task-list"
+         th:classappend="${#lists.size(tasks) == 1} ? ' single-card' : ''">
+        <div th:each="task : ${tasks}" class="task-card"
+             th:classappend="${'task-color--' + (task.colorKey != null ? task.colorKey : 'default')}">
 
             <div class="task-header">
                 <span class="task-title" th:text="${task.title}"></span>

@@ -1,0 +1,160 @@
+/* タスク colorKey（task-color--{key}）: 一覧・日ビュー・カレンダーで共通 */
+
+.task-card.task-color--default,
+.item-card.task.task-color--default {
+    border-left: 4px solid #cfd7e6;
+}
+
+.task-card.task-color--blue,
+.item-card.task.task-color--blue {
+    border-left: 4px solid #3b82f6;
+}
+
+.task-card.task-color--teal,
+.item-card.task.task-color--teal {
+    border-left: 4px solid #14b8a6;
+}
+
+.task-card.task-color--amber,
+.item-card.task.task-color--amber {
+    border-left: 4px solid #f59e0b;
+}
+
+.task-card.task-color--rose,
+.item-card.task.task-color--rose {
+    border-left: 4px solid #f43f5e;
+}
+
+.task-card.task-color--violet,
+.item-card.task.task-color--violet {
+    border-left: 4px solid #8b5cf6;
+}
+
+.task-card.task-color--slate,
+.item-card.task.task-color--slate {
+    border-left: 4px solid #64748b;
+}
+
+.calendar-week-unified .task-item.task-color--default {
+    border-left: 3px solid #cfd7e6;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--blue {
+    border-left: 3px solid #3b82f6;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--teal {
+    border-left: 3px solid #14b8a6;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--amber {
+    border-left: 3px solid #f59e0b;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--rose {
+    border-left: 3px solid #f43f5e;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--violet {
+    border-left: 3px solid #8b5cf6;
+    padding-left: 6px;
+}
+
+.calendar-week-unified .task-item.task-color--slate {
+    border-left: 3px solid #64748b;
+    padding-left: 6px;
+}
+
+/* 色選択フォーム */
+.color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.color-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #2f3e55;
+    cursor: pointer;
+}
+
+.color-swatch input {
+    margin: 0;
+}
+
+.swatch-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+}
+
+.swatch-dot.default { background: #e2e8f0; }
+.swatch-dot.blue { background: #3b82f6; }
+.swatch-dot.teal { background: #14b8a6; }
+.swatch-dot.amber { background: #f59e0b; }
+.swatch-dot.rose { background: #f43f5e; }
+.swatch-dot.violet { background: #8b5cf6; }
+.swatch-dot.slate { background: #64748b; }
+
+/* 詳細画面のカード */
+.card.task-color--default { border-left: 4px solid #cfd7e6; }
+.card.task-color--blue { border-left: 4px solid #3b82f6; }
+.card.task-color--teal { border-left: 4px solid #14b8a6; }
+.card.task-color--amber { border-left: 4px solid #f59e0b; }
+.card.task-color--rose { border-left: 4px solid #f43f5e; }
+.card.task-color--violet { border-left: 4px solid #8b5cf6; }
+.card.task-color--slate { border-left: 4px solid #64748b; }
+
+/* カレンダー帯（週行の下） */
+.task-calendar-band.task-color--default {
+    background: #e2e8f0;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.task-calendar-band.task-color--blue {
+    background: #bfdbfe;
+    color: #1e3a8a;
+    border: 1px solid #60a5fa;
+}
+
+.task-calendar-band.task-color--teal {
+    background: #99f6e4;
+    color: #115e59;
+    border: 1px solid #2dd4bf;
+}
+
+.task-calendar-band.task-color--amber {
+    background: #fde68a;
+    color: #78350f;
+    border: 1px solid #fbbf24;
+}
+
+.task-calendar-band.task-color--rose {
+    background: #fecdd3;
+    color: #881337;
+    border: 1px solid #fb7185;
+}
+
+.task-calendar-band.task-color--violet {
+    background: #ddd6fe;
+    color: #4c1d95;
+    border: 1px solid #a78bfa;
+}
+
+.task-calendar-band.task-color--slate {
+    background: #e2e8f0;
+    color: #1e293b;
+    border: 1px solid #94a3b8;
+}

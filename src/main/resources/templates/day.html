@@ -27,7 +27,8 @@
 
         <div class="item-list">
             <div class="item-card task"
-                 th:each="t : ${tasks}">
+                 th:each="t : ${tasks}"
+                 th:classappend="${'task-color--' + (t.colorKey != null ? t.colorKey : 'default')}">
                 <div class="item-title" th:text="${t.title}"></div>
 
                 <div class="item-meta">
@@ -72,7 +73,13 @@
                 <div class="item-title" th:text="${schedule.title}"></div>
 
                 <div class="item-meta"
-                    th:text="${#temporals.format(schedule.startDateTime, 'HH:mm') + ' 〜 ' + #temporals.format(schedule.endDateTime, 'HH:mm')}">
+                     th:if="${schedule.allDay != null and schedule.allDay}">
+                    終日
+                    <span th:text="${#temporals.format(schedule.startDateTime.toLocalDate(), 'yyyy-MM-dd') + ' 〜 ' + #temporals.format(schedule.endDateTime.toLocalDate(), 'yyyy-MM-dd')}"></span>
+                </div>
+                <div class="item-meta"
+                     th:unless="${schedule.allDay != null and schedule.allDay}"
+                     th:text="${#temporals.format(schedule.startDateTime, 'HH:mm') + ' 〜 ' + #temporals.format(schedule.endDateTime, 'HH:mm')}">
                 </div>
 
                 <div class="day-buttons">

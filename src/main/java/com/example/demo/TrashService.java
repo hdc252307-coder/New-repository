@@ -61,6 +61,7 @@ public class TrashService {
 
             trash.setTaskCreatedAt(task.getCreatedAt());
             trash.setTaskUpdatedAt(task.getUpdatedAt());
+            trash.setTaskColorKey(task.getColorKey());
 
             taskRepository.deleteById(id);
 
@@ -80,6 +81,7 @@ public class TrashService {
 
             trash.setScheduleCreatedAt(schedule.getCreatedAt());
             trash.setScheduleUpdatedAt(schedule.getUpdatedAt());
+            trash.setScheduleAllDay(schedule.getAllDay());
 
             scheduleRepository.deleteById(id);
         }
@@ -116,6 +118,7 @@ public class TrashService {
 
             task.setCreatedAt(trash.getTaskCreatedAt());
             task.setUpdatedAt(trash.getTaskUpdatedAt());
+            task.setColorKey(TaskColorKeys.normalize(trash.getTaskColorKey()));
 
             taskRepository.save(task);
 
@@ -134,6 +137,7 @@ public class TrashService {
 
             schedule.setCreatedAt(trash.getScheduleCreatedAt());
             schedule.setUpdatedAt(trash.getScheduleUpdatedAt());
+            schedule.setAllDay(Boolean.TRUE.equals(trash.getScheduleAllDay()));
 
             scheduleRepository.save(schedule);
         }

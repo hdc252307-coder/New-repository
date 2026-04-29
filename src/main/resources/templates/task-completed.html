@@ -10,8 +10,10 @@
 <div class="page-container list-page"
      th:classappend="${#lists.size(tasks) <= 4} ? ' center-mode' : ' top-mode'">
     <div class="page-header">
-        <h1 class="page-title">完了済みタスク</h1>
-        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+        <div class="title-user-stack">
+            <h1 class="page-title">完了済みタスク</h1>
+            <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+        </div>
     </div>
 
     <p th:if="${#lists.isEmpty(tasks)}" style="text-align:center; color:#6b7a99;">
@@ -19,7 +21,8 @@
     </p>
 
     <div class="task-list" th:if="${not #lists.isEmpty(tasks)}">
-        <div th:each="task : ${tasks}" class="task-card">
+        <div th:each="task : ${tasks}" class="task-card"
+             th:classappend="${'task-color--' + (task.colorKey != null ? task.colorKey : 'default')}">
             <div class="task-header">
                 <span class="task-title" th:text="${task.title}"></span>
                 <span class="priority" th:classappend="' p' + ${task.priority}">

@@ -26,6 +26,7 @@ public class TrashController {
 
         String username = userDetails.getUser().getUsername();
         model.addAttribute("trashList", trashService.findByUsername(username));
+        model.addAttribute("username", username);
 
         return "trash-list";
     }

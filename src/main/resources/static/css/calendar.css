@@ -69,35 +69,126 @@
     color: #1e3a8a;
 }
 
-/* カレンダー本体 */
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+/* カレンダー本体：週ごとに 7 列 1 グリッド（日付行＋タスク帯＋予定帯）。列 gap なしで帯が日付枠の下で横につながる */
+.calendar-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* 日付セル */
+.calendar-week-unified {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    width: 100%;
+    column-gap: 0;
+    row-gap: 0;
+    position: relative;
+    border: 1px solid #e5edff;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.task-calendar-band,
+.schedule-calendar-band {
+    box-sizing: border-box;
+    display: block;
+    min-height: 16px;
+    height: 16px;
+    line-height: 14px;
+    font-size: 10px;
+    padding: 0 6px;
+    border-radius: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+    position: relative;
+    border-top: 1px solid transparent;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.task-calendar-band {
+    border-radius: 6px;
+    color: #1e3a8a;
+}
+
+.schedule-calendar-band {
+    color: #14532d;
+    background: #bbf7d0;
+    border: 1px solid #4ade80;
+    border-top-color: #86efac;
+}
+
+.calendar-band-overlay {
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    column-gap: 0;
+    row-gap: 2px;
+    pointer-events: none;
+    z-index: 3;
+    max-height: 58px; /* 3 rows * 18px + gaps(2px * 2) */
+    overflow: hidden;
+}
+
+.calendar-band-overlay .task-calendar-band,
+.calendar-band-overlay .schedule-calendar-band {
+    pointer-events: auto;
+}
+
+.task-item--undated {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+/* 日付セル（週グリッドの 1 行目。右隣との縦線は帯行と揃えるため列 gap は使わない） */
 .day-cell {
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border: 1px solid #e5edff;
-    border-radius: 8px;
+    border-right: 1px solid #e5edff;
+    border-bottom: 1px solid #e5edff;
     padding: 6px;
-    height: 110px;
+    min-height: 110px;
     text-decoration: none;
     color: inherit;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background 0.15s ease;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.day-overflow-indicator {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 4;
+    font-size: 10px;
+    line-height: 1;
+    color: #1e3a8a;
+    background: #dbeafe;
+    border: 1px solid #93c5fd;
+    border-radius: 999px;
+    padding: 2px 5px;
+    font-weight: 700;
+}
+
+.calendar-week-unified > .day-cell:nth-child(7n) {
+    border-right: none;
 }
 
 .day-cell:hover {
     background: #f3f8ff;
-    border-color: #93c5fd;
 }
 
 .day-cell.today {
     background-color: #e0f0ff;
-    border-color: #1d4ed8;
+    box-shadow: inset 0 0 0 1px #1d4ed8;
 }
 
 .date-number {
@@ -112,6 +203,9 @@
     flex-direction: column;
     gap: 2px;
     overflow: hidden;
+    position: relative;
+    z-index: 2;
+    padding-right: 26px;
 }
 
 .task-item {

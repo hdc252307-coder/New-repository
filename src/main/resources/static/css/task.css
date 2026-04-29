@@ -116,6 +116,7 @@
     border-radius: 16px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
     width: 100%;
+    box-sizing: border-box;
 }
 
 .task-header {
@@ -140,6 +141,7 @@
     margin-top: 10px;
     color: #6b7a99;
     font-size: 15px;
+    text-align: center;
 }
 
 .task-deadline,
@@ -174,8 +176,10 @@
 
 .task-list-page .task-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 300px));
     gap: 16px;
+    justify-content: center;
+    justify-items: stretch;
     width: 100%;
     max-width: 640px;
     margin-left: auto;
@@ -183,18 +187,33 @@
     margin-top: 8px;
 }
 
+.task-list-page .task-list.single-card {
+    grid-template-columns: minmax(0, 300px);
+    max-width: 300px;
+}
+
+.task-list-page .task-list > .task-card:only-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+}
+
+.task-list-page .task-list > .task-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+}
+
 .task-list-page .task-header {
-    position: relative;
+    position: static;
     justify-content: center;
     align-items: flex-start;
 }
 
 .task-list-page .task-title {
     width: 100%;
-    padding-right: 40px; /* 優先度バッジ分の逃げ */
     text-align: center;
     line-height: 1.25;
-    font-size: clamp(15px, 2.8vw, 19px);
+    font-size: clamp(13px, 2.3vw, 18px);
+    overflow-wrap: anywhere;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -204,9 +223,15 @@
 
 .task-list-page .task-card .priority {
     position: absolute;
-    right: 0;
-    bottom: 2px;
+    right: 12px;
+    bottom: 12px;
     top: auto;
+}
+
+.task-list-page .task-card {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
 }
 
 .task-list-page .recommend-box {
@@ -226,6 +251,12 @@
 .task-list-page .recommend-box li {
     text-align: center;
     word-break: break-word;
+}
+
+.task-list-page .recommend-box li.recommend-expired,
+.task-list-page .recommend-box li.recommend-expired a {
+    color: #d84a4a;
+    font-weight: 700;
 }
 
 .task-list-page .add-task-btn {

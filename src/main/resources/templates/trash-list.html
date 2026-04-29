@@ -10,7 +10,12 @@
 <div class="page-container list-page"
      th:classappend="${trashList != null and trashList.size() <= 4} ? ' center-mode' : ' top-mode'">
 
-    <h1 class="page-title">削除済み一覧</h1>
+    <div class="page-header">
+        <div class="title-user-stack">
+            <h1 class="page-title">削除済み一覧</h1>
+            <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+        </div>
+    </div>
 
     <!-- 削除データがある場合 -->
     <div class="task-list" th:if="${trashList != null and trashList.size() > 0}">
