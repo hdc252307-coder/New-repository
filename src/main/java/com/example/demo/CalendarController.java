@@ -60,12 +60,13 @@ public class CalendarController {
         LocalDate firstDay = yearMonth.atDay(1);
         int dayOfWeek = firstDay.getDayOfWeek().getValue();
         LocalDate start = firstDay.minusDays(dayOfWeek % 7);
+        int daySlots = 35;
+        LocalDate gridEnd35 = start.plusDays(daySlots - 1L);
+        if (gridEnd35.isBefore(yearMonth.atEndOfMonth())) {
+            daySlots = 42;
+        }
 
-        for (int i = 0; i < 35; i++) 
-
-        
-
-        {
+        for (int i = 0; i < daySlots; i++) {
             dates.add(start.plusDays(i));
         }
 
@@ -92,7 +93,7 @@ public class CalendarController {
         // スケジュール：月と重なるものすべて（終日の複数日・前月から続く予定も含む）
         LocalDateTime monthStart = startOfMonth.atStartOfDay();
         LocalDateTime monthEndExclusive = endOfMonth.plusDays(1).atStartOfDay();
-        List<Schedule> monthlySchedules = scheduleRepository.findOverlapping(username, monthStart, monthEndExclusive)
+        List<Schedule> monthlySchedules = scheduleService.findExpandedOverlapping(username, monthStart, monthEndExclusive)
                 .stream()
                 .sorted(Comparator.comparing(Schedule::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder())))
                 .toList();

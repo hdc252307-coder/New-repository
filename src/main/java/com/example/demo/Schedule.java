@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 @Table(name = "SCHEDULE")
 public class Schedule {
 
+    public static final String RECURRENCE_NONE = "none";
+    public static final String RECURRENCE_WEEKLY = "weekly";
+    public static final String RECURRENCE_MONTHLY = "monthly";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,12 +37,22 @@ public class Schedule {
     @Column(name = "all_day")
     private Boolean allDay;
 
+    @Column(name = "recurrence_type", length = 16)
+    private String recurrenceType;
+
+    @Column(name = "recurrence_interval")
+    private Integer recurrenceInterval;
+
+    @Column(name = "recurrence_until")
+    private LocalDateTime recurrenceUntil;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Schedule() {}
 
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -58,10 +72,23 @@ public class Schedule {
     public Boolean getAllDay() { return allDay; }
     public void setAllDay(Boolean allDay) { this.allDay = allDay; }
 
+    public String getRecurrenceType() { return recurrenceType; }
+    public void setRecurrenceType(String recurrenceType) { this.recurrenceType = recurrenceType; }
+
+    public Integer getRecurrenceInterval() { return recurrenceInterval; }
+    public void setRecurrenceInterval(Integer recurrenceInterval) { this.recurrenceInterval = recurrenceInterval; }
+
+    public LocalDateTime getRecurrenceUntil() { return recurrenceUntil; }
+    public void setRecurrenceUntil(LocalDateTime recurrenceUntil) { this.recurrenceUntil = recurrenceUntil; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public boolean isRecurring() {
+        return RECURRENCE_WEEKLY.equals(recurrenceType) || RECURRENCE_MONTHLY.equals(recurrenceType);
+    }
 }
 

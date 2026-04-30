@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.security.RememberMeObservationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -9,24 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private RememberMeInterceptor rememberMeInterceptor;
+    private RememberMeObservationInterceptor rememberMeObservationInterceptor;
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) 
-
-    
-    {
-        registry.addInterceptor(rememberMeInterceptor)
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(rememberMeObservationInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/login",
-                        "/login/**",
-                        "/register",
-                        "/register/**",
-                        "/css/**",
-                        "/js/**",
-                        "/h2-console/**",   // H2 Console を使う場合は除外推奨
-                        "/error"            // エラー画面は除外しておくと安全
-                );
+                .excludePathPatterns("/css/**", "/js/**", "/h2-console/**", "/error");
     }
 }

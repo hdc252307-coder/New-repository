@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,10 +25,17 @@ public class TaskController {
     @Autowired
     private TrashService trashService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
     // 一覧
     @GetMapping("/tasks")
     public String taskList(
             @RequestParam(defaultValue = "priority") String sort,
+            @RequestParam(value = "showOnboarding", required = false, defaultValue = "false") boolean showOnboardingRequested,
             @AuthenticationPrincipal MyUserDetails userDetails,
             Model model
     )
@@ -47,8 +55,29 @@ public class TaskController {
         model.addAttribute("username", username);
         model.addAttribute("today", LocalDate.now());
         model.addAttribute("recommendedTasks", taskService.getRecommendedTasks(username));
+        model.addAttribute("notifications", notificationService.getNotifications(username));
+        User currentUser = userRepository.findByUsername(username);
+        boolean firstOpen = currentUser != null && !Boolean.TRUE.equals(currentUser.getOnboardingCompleted());
+        model.addAttribute("showOnboarding", firstOpen || showOnboardingRequested);
 
         return "task-list";
+    }
+
+    @PostMapping("/tasks/onboarding/complete")
+    @ResponseBody
+    public ResponseEntity<Void> completeOnboarding(@AuthenticationPrincipal MyUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        String username = userDetails.getUser().getUsername();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        user.setOnboardingCompleted(true);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 
     // 新規作成画面

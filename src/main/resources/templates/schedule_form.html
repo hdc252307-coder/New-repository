@@ -51,6 +51,25 @@
                 <textarea name="description" rows="3"></textarea>
             </div>
 
+            <div class="form-group">
+                <label>繰り返し</label>
+                <select name="recurrenceType" id="recurrenceType">
+                    <option value="none" selected>なし</option>
+                    <option value="weekly">毎週</option>
+                    <option value="monthly">毎月</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="recurrenceIntervalGroup" style="display:none;">
+                <label>繰り返し間隔</label>
+                <input type="number" name="recurrenceInterval" id="recurrenceInterval" min="1" value="1">
+            </div>
+
+            <div class="form-group" id="recurrenceUntilGroup" style="display:none;">
+                <label>繰り返し終了日（任意）</label>
+                <input type="date" name="recurrenceUntilDate" id="recurrenceUntilDate">
+            </div>
+
             <button type="submit" class="btn primary">保存</button>
         </form>
 
@@ -69,6 +88,9 @@
     var en = document.getElementById('endDateTime');
     var sd = document.getElementById('startDate');
     var ed = document.getElementById('endDate');
+    var recurrenceType = document.getElementById('recurrenceType');
+    var recurrenceIntervalGroup = document.getElementById('recurrenceIntervalGroup');
+    var recurrenceUntilGroup = document.getElementById('recurrenceUntilGroup');
     function sync() {
         var on = cb.checked;
         timed.style.display = on ? 'none' : '';
@@ -80,8 +102,15 @@
         if (sd) sd.required = on;
         if (ed) ed.required = on;
     }
+    function syncRecurrence() {
+        var recurring = recurrenceType && recurrenceType.value !== 'none';
+        recurrenceIntervalGroup.style.display = recurring ? '' : 'none';
+        recurrenceUntilGroup.style.display = recurring ? '' : 'none';
+    }
     cb.addEventListener('change', sync);
+    if (recurrenceType) recurrenceType.addEventListener('change', syncRecurrence);
     sync();
+    syncRecurrence();
 })();
 </script>
 

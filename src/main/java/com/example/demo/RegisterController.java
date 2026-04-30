@@ -41,6 +41,7 @@ public class RegisterController
 
         // ハッシュ化したパスワードを保存
         User user = new User(username, hashed, now, now);
+        user.setOnboardingCompleted(false);
         userRepository.save(user);
 
         return "redirect:/login";

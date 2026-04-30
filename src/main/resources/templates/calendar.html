@@ -8,7 +8,7 @@
 
 <body>
 
-<div class="calendar-page">
+<div class="calendar-page" th:attr="data-year=${yearMonth.year},data-month=${yearMonth.monthValue}">
     <div class="calendar-back">
         <a href="/tasks" class="link-text">← タスク一覧に戻る</a>
     </div>
@@ -24,7 +24,8 @@
 
         <h2 class="calendar-title" th:text="${title}">2026年3月</h2>
 
-        <a href="/schedule/new" class="btn primary calendar-add-btn">＋ 新しい予定</a>
+        <a class="btn primary calendar-add-btn"
+           th:href="@{/schedule/new(returnTo=${'/calendar?year=' + yearMonth.year + '&month=' + yearMonth.monthValue})}">＋ 新しい予定</a>
 
         <a class="nav-btn"
            th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}">
@@ -44,8 +45,9 @@
             <a class="day-cell"
                th:each="date : ${weekDates}"
                th:href="@{'/calendar/day?date=' + ${date}}"
+               th:attr="data-date=${date}"
                th:style="|grid-row: 1;|"
-               th:classappend="${date.equals(T(java.time.LocalDate).now()) ? 'today' : ''}">
+               th:classappend="${(date.equals(T(java.time.LocalDate).now()) ? 'today ' : '') + (date.monthValue != yearMonth.monthValue ? 'outside-month' : '')}">
 
                 <div class="date-number" th:text="${date.dayOfMonth}">1</div>
                 <div class="day-overflow-indicator"
@@ -80,7 +82,9 @@
 
                 <a class="schedule-calendar-band"
                    th:each="seg : ${scheduleBandWeeks.get(weekStat.index)}"
-                   th:href="@{/schedule/{id}/edit(id=${seg.scheduleId})}"
+                   th:href="@{/schedule/{id}/edit(id=${seg.scheduleId},returnTo=${'/calendar?year=' + yearMonth.year + '&month=' + yearMonth.monthValue})}"
+                   draggable="true"
+                   th:attr="data-schedule-id=${seg.scheduleId},data-occ-start=${seg.occurrenceStartDate}"
                    th:style="|grid-row: ${bandRowCounts.get(weekStat.index) + seg.lane + 1}; grid-column: ${seg.colStart + 1} / ${seg.colEndInclusive + 2};|"
                    th:title="${seg.title}"
                    th:text="${seg.title}">
@@ -90,6 +94,69 @@
     </div>
     </div>
 </div>
+
+<script>
+(function () {
+    var dragging = null;
+
+    document.querySelectorAll('.schedule-calendar-band').forEach(function (band) {
+        band.addEventListener('dragstart', function (e) {
+            dragging = {
+                id: band.getAttribute('data-schedule-id'),
+                occStart: band.getAttribute('data-occ-start')
+            };
+            if (e.dataTransfer) {
+                e.dataTransfer.setData('text/plain', dragging.id || '');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+            band.classList.add('dragging');
+        });
+        band.addEventListener('dragend', function () {
+            band.classList.remove('dragging');
+            dragging = null;
+            document.querySelectorAll('.day-cell.drop-target').forEach(function (c) {
+                c.classList.remove('drop-target');
+            });
+        });
+    });
+
+    document.querySelectorAll('.day-cell').forEach(function (cell) {
+        cell.addEventListener('dragover', function (e) {
+            if (!dragging) return;
+            e.preventDefault();
+            cell.classList.add('drop-target');
+        });
+        cell.addEventListener('dragleave', function () {
+            cell.classList.remove('drop-target');
+        });
+        cell.addEventListener('drop', function (e) {
+            if (!dragging) return;
+            e.preventDefault();
+            cell.classList.remove('drop-target');
+            var targetDate = cell.getAttribute('data-date');
+            if (!targetDate || !dragging.id || !dragging.occStart) return;
+            fetch('/schedule/' + dragging.id + '/move', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'targetDate=' + encodeURIComponent(targetDate)
+                    + '&occurrenceStartDate=' + encodeURIComponent(dragging.occStart)
+            }).then(function () {
+                var page = document.querySelector('.calendar-page');
+                var currentYear = page ? parseInt(page.getAttribute('data-year') || '0', 10) : 0;
+                var currentMonth = page ? parseInt(page.getAttribute('data-month') || '0', 10) : 0;
+                var moved = new Date(targetDate + 'T00:00:00');
+                var movedYear = moved.getFullYear();
+                var movedMonth = moved.getMonth() + 1;
+                if (movedYear !== currentYear || movedMonth !== currentMonth) {
+                    window.location.href = '/calendar?year=' + movedYear + '&month=' + movedMonth;
+                } else {
+                    window.location.reload();
+                }
+            }).catch(function () {});
+        });
+    });
+})();
+</script>
 
 </body>
 </html>

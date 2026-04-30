@@ -20,6 +20,19 @@
             <button type="submit" class="logout-btn">ログアウト</button>
         </form>
     </div> <!-- ← ここで確実に閉じる -->
+    <div style="width:100%;max-width:640px;margin:0 auto 8px;text-align:right;">
+        <button type="button" id="openOnboardingBtn" class="btn secondary" style="padding:8px 12px;">チュートリアルを見る</button>
+    </div>
+
+    <div class="notify-box" th:if="${notifications != null and !#lists.isEmpty(notifications)}">
+        <h3>お知らせ</h3>
+        <ul>
+            <li th:each="n : ${notifications}" th:classappend="${n.level == 'warn'} ? ' notify-warn' : ''">
+                <a th:if="${n.link != null}" th:href="${n.link}" th:text="${n.message}"></a>
+                <span th:if="${n.link == null}" th:text="${n.message}"></span>
+            </li>
+        </ul>
+    </div>
 
     <!-- おすすめタスク -->
     <div class="recommend-box" th:if="${not #lists.isEmpty(recommendedTasks)}">
@@ -75,6 +88,128 @@
     <a th:href="@{/trash}" class="btn secondary add-task-btn">削除済み一覧</a>
 
 </div>
+
+<div id="onboardingOverlay" class="onboarding-overlay" style="display:none;" th:attr="data-first-open=${showOnboarding}">
+    <div class="onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+        <div class="onboarding-head">
+            <h3 id="onboardingTitle">はじめての使い方ガイド</h3>
+            <div id="onboardingStepCount" class="onboarding-step-count"></div>
+        </div>
+
+        <div class="onboarding-image-wrap">
+            <img id="onboardingImage" class="onboarding-image" alt="操作説明スクリーンショット">
+            <div id="onboardingFallback" class="onboarding-fallback" style="display:none;">
+                画像を読み込めませんでした。スクリーンショットを `/img/onboarding/` に配置すると表示されます。
+            </div>
+        </div>
+
+        <p id="onboardingText" class="onboarding-text"></p>
+
+        <div class="onboarding-actions">
+            <div class="onboarding-actions-left">
+                <button type="button" id="onboardingSkipBtn" class="onboarding-btn secondary">次回から表示しない</button>
+                <button type="button" id="onboardingCloseBtn" class="onboarding-btn secondary">閉じる</button>
+            </div>
+            <div class="onboarding-actions-right">
+                <button type="button" id="onboardingPrevBtn" class="onboarding-btn secondary">戻る</button>
+                <button type="button" id="onboardingNextBtn" class="onboarding-btn primary">次へ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var steps = [
+        { image: '/img/onboarding/01-home.png', text: '最初にトップ画面からログインまたは新規登録を選びます。' },
+        { image: '/img/onboarding/02-register.png', text: '新規登録ではユーザー名とパスワードを入力してアカウントを作成します。' },
+        { image: '/img/onboarding/03-login.png', text: 'ログイン時に「ログイン情報を保持する」をONにすると再ログインの手間を減らせます。' },
+        { image: '/img/onboarding/04-task-list-overview.png', text: 'タスク一覧では主要導線（新規作成、完了済み、カレンダー、削除済み）へ移動できます。' },
+        { image: '/img/onboarding/05-task-new.png', text: 'タスク追加ではタイトル、期限、優先度、色、所要時間を設定できます。' },
+        { image: '/img/onboarding/06-calendar-task-band.png', text: 'カレンダーではタスクの帯表示で、期間の見通しを確認できます。' },
+        { image: '/img/onboarding/07-schedule-new.png', text: '予定追加では終日/時刻指定を使い分けて予定を登録できます。' },
+        { image: '/img/onboarding/08-calendar-schedule-band.png', text: '予定を追加するとカレンダー帯にも反映され、タスクと一緒に把握できます。' },
+        { image: '/img/onboarding/09-completed-tasks.png', text: '完了済みタスク画面では、履歴確認と未完了への戻し操作ができます。' },
+        { image: '/img/onboarding/10-trash-list.png', text: '削除済み一覧では必要なデータを復元し、不要なら完全削除できます。' }
+    ];
+
+    var overlay = document.getElementById('onboardingOverlay');
+    if (!overlay) return;
+
+    var imageEl = document.getElementById('onboardingImage');
+    var fallbackEl = document.getElementById('onboardingFallback');
+    var textEl = document.getElementById('onboardingText');
+    var countEl = document.getElementById('onboardingStepCount');
+    var prevBtn = document.getElementById('onboardingPrevBtn');
+    var nextBtn = document.getElementById('onboardingNextBtn');
+    var closeBtn = document.getElementById('onboardingCloseBtn');
+    var skipBtn = document.getElementById('onboardingSkipBtn');
+    var openBtn = document.getElementById('openOnboardingBtn');
+
+    var current = 0;
+
+    function render() {
+        var step = steps[current];
+        countEl.textContent = 'STEP ' + (current + 1) + ' / ' + steps.length;
+        textEl.textContent = step.text;
+        fallbackEl.style.display = 'none';
+        imageEl.style.display = '';
+        imageEl.src = step.image;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === steps.length - 1 ? '完了' : '次へ';
+    }
+
+    imageEl.onerror = function () {
+        imageEl.style.display = 'none';
+        fallbackEl.style.display = '';
+    };
+
+    function openModal() {
+        current = 0;
+        render();
+        overlay.style.display = 'flex';
+    }
+
+    function closeModal() {
+        overlay.style.display = 'none';
+    }
+
+    function markCompleted() {
+        fetch('/tasks/onboarding/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).catch(function () {});
+    }
+
+    prevBtn.addEventListener('click', function () {
+        if (current > 0) {
+            current -= 1;
+            render();
+        }
+    });
+
+    nextBtn.addEventListener('click', function () {
+        if (current >= steps.length - 1) {
+            markCompleted();
+            closeModal();
+            return;
+        }
+        current += 1;
+        render();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    skipBtn.addEventListener('click', function () {
+        markCompleted();
+        closeModal();
+    });
+    if (openBtn) openBtn.addEventListener('click', openModal);
+
+    if (overlay.dataset.firstOpen === 'true') {
+        openModal();
+    }
+})();
+</script>
 
 </body>
 </html>

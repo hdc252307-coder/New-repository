@@ -39,7 +39,7 @@
                 <div class="day-buttons">
 
                     <!-- 編集 -->
-                    <a th:href="@{'/tasks/' + ${t.id} + '/edit?returnTo=/calendar/day%3Fdate=' + ${date}}"
+                    <a th:href="@{/tasks/{id}/edit(id=${t.id},returnTo=${'/calendar/day?date=' + #temporals.format(date, 'yyyy-MM-dd')})}"
                        class="btn edit">編集</a>
 
                     <form th:action="@{'/tasks/' + ${t.id} + '/toggle-complete'}" method="post">
@@ -85,10 +85,10 @@
                 <div class="day-buttons">
 
                     <!-- 編集 -->
-                    <a th:href="@{'/schedule/' + ${schedule.id} + '/edit'}" class="btn edit">編集</a>
+                    <a th:href="@{/schedule/{id}/edit(id=${schedule.id},returnTo=${'/calendar/day?date=' + #temporals.format(date, 'yyyy-MM-dd')})}" class="btn edit">編集</a>
 
                     <!-- 削除 -->
-                    <form th:action="@{'/schedule/' + ${schedule.id} + '/delete'}" method="post"
+                    <form th:action="@{/schedule/{id}/delete(id=${schedule.id},returnTo=${'/calendar/day?date=' + #temporals.format(date, 'yyyy-MM-dd')})}" method="post"
                         onsubmit="return confirm('本当に削除しますか？');">
                         <button type="submit" class="btn delete-small">削除</button>
                     </form>

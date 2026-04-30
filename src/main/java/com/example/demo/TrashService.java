@@ -82,6 +82,9 @@ public class TrashService {
             trash.setScheduleCreatedAt(schedule.getCreatedAt());
             trash.setScheduleUpdatedAt(schedule.getUpdatedAt());
             trash.setScheduleAllDay(schedule.getAllDay());
+            trash.setScheduleRecurrenceType(schedule.getRecurrenceType());
+            trash.setScheduleRecurrenceInterval(schedule.getRecurrenceInterval());
+            trash.setScheduleRecurrenceUntil(schedule.getRecurrenceUntil());
 
             scheduleRepository.deleteById(id);
         }
@@ -138,6 +141,9 @@ public class TrashService {
             schedule.setCreatedAt(trash.getScheduleCreatedAt());
             schedule.setUpdatedAt(trash.getScheduleUpdatedAt());
             schedule.setAllDay(Boolean.TRUE.equals(trash.getScheduleAllDay()));
+            schedule.setRecurrenceType(trash.getScheduleRecurrenceType());
+            schedule.setRecurrenceInterval(trash.getScheduleRecurrenceInterval());
+            schedule.setRecurrenceUntil(trash.getScheduleRecurrenceUntil());
 
             scheduleRepository.save(schedule);
         }
@@ -164,6 +170,9 @@ public class TrashService {
     public void moveExpiredSchedulesToTrash(LocalDateTime now) {
         List<Schedule> expiredSchedules = scheduleRepository.findByEndDateTimeBefore(now);
         for (Schedule schedule : expiredSchedules) {
+            if (schedule.isRecurring()) {
+                continue;
+            }
             moveToTrash("schedule", schedule.getId(), schedule.getUser().getUsername());
         }
     }

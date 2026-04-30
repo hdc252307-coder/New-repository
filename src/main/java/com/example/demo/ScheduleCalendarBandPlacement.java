@@ -6,6 +6,7 @@ package com.example.demo;
 public record ScheduleCalendarBandPlacement(
         Long scheduleId,
         String title,
+        String occurrenceStartDate,
         int colStart,
         int colEndInclusive,
         int lane

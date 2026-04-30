@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Controller
@@ -19,6 +21,9 @@ public class ScheduleController {
 
     @Autowired
     private TrashService trashService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
     // 一覧（カレンダー）
     @GetMapping("/schedule")
@@ -43,13 +48,13 @@ public class ScheduleController {
 
         LocalDateTime rangeStart = start.atStartOfDay();
         LocalDateTime rangeEndExclusive = end.plusDays(1).atStartOfDay();
-        List<Schedule> schedules = scheduleRepository.findOverlapping(username, rangeStart, rangeEndExclusive);
+        List<Schedule> schedules = scheduleService.findExpandedOverlapping(username, rangeStart, rangeEndExclusive);
 
         model.addAttribute("schedules", schedules);
         model.addAttribute("year", y);
         model.addAttribute("month", m);
 
-        return "schedule-list";
+        return "redirect:/calendar?year=" + y + "&month=" + m;
     }
 
     // 新規作成画面
@@ -76,7 +81,10 @@ public class ScheduleController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String startDateTime,
-            @RequestParam(required = false) String endDateTime
+            @RequestParam(required = false) String endDateTime,
+            @RequestParam(required = false, defaultValue = "none") String recurrenceType,
+            @RequestParam(required = false, defaultValue = "1") Integer recurrenceInterval,
+            @RequestParam(required = false) String recurrenceUntilDate
     ) {
         if (userDetails == null) return "redirect:/login";
 
@@ -115,6 +123,10 @@ public class ScheduleController {
         schedule.setStartDateTime(start);
         schedule.setEndDateTime(end);
         schedule.setAllDay(isAllDay);
+        String normalizedRecurrenceType = ScheduleService.normalizeRecurrenceType(recurrenceType);
+        schedule.setRecurrenceType(normalizedRecurrenceType);
+        schedule.setRecurrenceInterval(ScheduleService.normalizeRecurrenceInterval(recurrenceInterval));
+        schedule.setRecurrenceUntil(parseRecurrenceUntil(normalizedRecurrenceType, recurrenceUntilDate, isAllDay));
         schedule.setCreatedAt(LocalDateTime.now());
         schedule.setUpdatedAt(LocalDateTime.now());
 
@@ -128,6 +140,7 @@ public class ScheduleController {
     public String editSchedule(
             @PathVariable Long id,
             @AuthenticationPrincipal MyUserDetails userDetails,
+            @RequestParam(required = false) String returnTo,
             Model model
     ) 
     
@@ -150,6 +163,9 @@ public class ScheduleController {
                 schedule.getStartDateTime() != null ? schedule.getStartDateTime().toLocalDate() : null);
         model.addAttribute("allDayEndDate", ScheduleAllDaySupport.toInclusiveEndDate(
                 schedule.getStartDateTime(), schedule.getEndDateTime(), schedule.getAllDay()));
+        model.addAttribute("recurrenceUntilDate",
+                schedule.getRecurrenceUntil() != null ? schedule.getRecurrenceUntil().toLocalDate() : null);
+        model.addAttribute("returnTo", sanitizeReturnTo(returnTo));
 
         return "schedule_edit";
     }
@@ -174,7 +190,11 @@ public class ScheduleController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String startDateTime,
-            @RequestParam(required = false) String endDateTime
+            @RequestParam(required = false) String endDateTime,
+            @RequestParam(required = false, defaultValue = "none") String recurrenceType,
+            @RequestParam(required = false, defaultValue = "1") Integer recurrenceInterval,
+            @RequestParam(required = false) String recurrenceUntilDate,
+            @RequestParam(required = false) String returnTo
     ) {
         if (userDetails == null) return "redirect:/login";
 
@@ -218,18 +238,34 @@ public class ScheduleController {
         schedule.setStartDateTime(start);
         schedule.setEndDateTime(end);
         schedule.setAllDay(isAllDay);
+        String normalizedRecurrenceType = ScheduleService.normalizeRecurrenceType(recurrenceType);
+        schedule.setRecurrenceType(normalizedRecurrenceType);
+        schedule.setRecurrenceInterval(ScheduleService.normalizeRecurrenceInterval(recurrenceInterval));
+        schedule.setRecurrenceUntil(parseRecurrenceUntil(normalizedRecurrenceType, recurrenceUntilDate, isAllDay));
         schedule.setUpdatedAt(LocalDateTime.now());
 
         scheduleRepository.save(schedule);
 
-        return "redirect:/calendar";
+        return buildRedirect(returnTo, "/calendar");
+    }
+
+    private LocalDateTime parseRecurrenceUntil(String recurrenceType, String recurrenceUntilDate, boolean isAllDay) {
+        if (Schedule.RECURRENCE_NONE.equals(recurrenceType)) {
+            return null;
+        }
+        if (recurrenceUntilDate == null || recurrenceUntilDate.isBlank()) {
+            return null;
+        }
+        LocalDate d = LocalDate.parse(recurrenceUntilDate);
+        return isAllDay ? d.atTime(23, 59, 59) : d.atTime(23, 59, 59);
     }
 
     // 削除（TrashService に委譲）
     @PostMapping("/schedule/{id}/delete")
     public String deleteSchedule(
             @PathVariable Long id,
-            @AuthenticationPrincipal MyUserDetails userDetails
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            @RequestParam(required = false) String returnTo
     ) 
             
     {
@@ -241,6 +277,57 @@ public class ScheduleController {
         if (!schedule.getUser().getUsername().equals(username)) return "redirect:/calendar";
         trashService.moveToTrash("schedule", id, username);
 
-        return "redirect:/calendar";
+        return buildRedirect(returnTo, "/calendar");
+    }
+
+    @PostMapping("/schedule/{id}/move")
+    @ResponseBody
+    public ResponseEntity<Void> moveSchedule(
+            @PathVariable Long id,
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            @RequestParam String targetDate,
+            @RequestParam String occurrenceStartDate
+    ) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
+        Schedule schedule = scheduleRepository.findById(id).orElse(null);
+        if (schedule == null) return ResponseEntity.notFound().build();
+        if (!schedule.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
+            return ResponseEntity.status(403).build();
+        }
+        if (schedule.getStartDateTime() == null || schedule.getEndDateTime() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        LocalDate target = LocalDate.parse(targetDate);
+        LocalDate sourceOccurrenceStart = LocalDate.parse(occurrenceStartDate);
+        long deltaDays = ChronoUnit.DAYS.between(sourceOccurrenceStart, target);
+        if (deltaDays == 0) {
+            return ResponseEntity.ok().build();
+        }
+
+        schedule.setStartDateTime(schedule.getStartDateTime().plusDays(deltaDays));
+        schedule.setEndDateTime(schedule.getEndDateTime().plusDays(deltaDays));
+        if (schedule.getRecurrenceUntil() != null) {
+            schedule.setRecurrenceUntil(schedule.getRecurrenceUntil().plusDays(deltaDays));
+        }
+        schedule.setUpdatedAt(LocalDateTime.now());
+        scheduleRepository.save(schedule);
+        return ResponseEntity.ok().build();
+    }
+
+    private String buildRedirect(String returnTo, String defaultPath) {
+        String safePath = sanitizeReturnTo(returnTo);
+        return "redirect:" + (safePath != null ? safePath : defaultPath);
+    }
+
+    private String sanitizeReturnTo(String returnTo) {
+        if (returnTo == null || returnTo.isBlank()) {
+            return null;
+        }
+        String trimmed = returnTo.trim();
+        if (!trimmed.startsWith("/") || trimmed.startsWith("//")) {
+            return null;
+        }
+        return trimmed;
     }
 }

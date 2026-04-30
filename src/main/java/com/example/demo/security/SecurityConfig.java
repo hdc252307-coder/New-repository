@@ -10,13 +10,21 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private MyUserDetailsService myUserDetailsService;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,10 +57,18 @@ public class SecurityConfig {
                 .failureUrl("/login?error") 
                 .permitAll()
             )
+            .rememberMe(remember -> remember
+                .rememberMeParameter("rememberMe")
+                .rememberMeCookieName("remember_token")
+                .tokenValiditySeconds(60 * 60 * 24 * 30)
+                .userDetailsService(myUserDetailsService)
+                .tokenRepository(persistentTokenRepository())
+                .key("demo-remember-me-key-v1")
+            )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
                 .deleteCookies("remember_token")
+                .logoutSuccessUrl("/login")
                 .permitAll()
             )
             .exceptionHandling(e -> e
@@ -90,5 +106,21 @@ public class SecurityConfig {
             AuthenticationConfiguration config
     ) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS persistent_logins (" +
+                        "username VARCHAR(64) NOT NULL, " +
+                        "series VARCHAR(64) PRIMARY KEY, " +
+                        "token VARCHAR(64) NOT NULL, " +
+                        "last_used TIMESTAMP NOT NULL" +
+                        ")"
+        );
+        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+        repo.setDataSource(dataSource);
+        return repo;
     }
 }

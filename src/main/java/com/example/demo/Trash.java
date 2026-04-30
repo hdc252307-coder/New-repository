@@ -48,6 +48,15 @@ public class Trash {
     @Column(name = "schedule_all_day")
     private Boolean scheduleAllDay;
 
+    @Column(name = "schedule_recurrence_type", length = 16)
+    private String scheduleRecurrenceType;
+
+    @Column(name = "schedule_recurrence_interval")
+    private Integer scheduleRecurrenceInterval;
+
+    @Column(name = "schedule_recurrence_until")
+    private LocalDateTime scheduleRecurrenceUntil;
+
     // --- Getter / Setter ---
 
     public Long getId() { return id; }
@@ -109,4 +118,13 @@ public class Trash {
 
     public Boolean getScheduleAllDay() { return scheduleAllDay; }
     public void setScheduleAllDay(Boolean scheduleAllDay) { this.scheduleAllDay = scheduleAllDay; }
+
+    public String getScheduleRecurrenceType() { return scheduleRecurrenceType; }
+    public void setScheduleRecurrenceType(String scheduleRecurrenceType) { this.scheduleRecurrenceType = scheduleRecurrenceType; }
+
+    public Integer getScheduleRecurrenceInterval() { return scheduleRecurrenceInterval; }
+    public void setScheduleRecurrenceInterval(Integer scheduleRecurrenceInterval) { this.scheduleRecurrenceInterval = scheduleRecurrenceInterval; }
+
+    public LocalDateTime getScheduleRecurrenceUntil() { return scheduleRecurrenceUntil; }
+    public void setScheduleRecurrenceUntil(LocalDateTime scheduleRecurrenceUntil) { this.scheduleRecurrenceUntil = scheduleRecurrenceUntil; }
 }

@@ -11,6 +11,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     // User で検索（Service 用）
     List<Schedule> findByUser(User user);
+    List<Schedule> findByUserUsername(String username);
 
     // 月カレンダー用（開始日時が月内にあるもの）
     List<Schedule> findByUserUsernameAndStartDateTimeBetween(

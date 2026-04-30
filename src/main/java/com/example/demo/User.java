@@ -22,6 +22,7 @@ public class User {
 
     private String rememberToken;
     private LocalDateTime rememberTokenExpiry;
+    private Boolean onboardingCompleted;
 
     public User() {}
 
@@ -55,4 +56,7 @@ public class User {
 
     public LocalDateTime getRememberTokenExpiry() { return rememberTokenExpiry; }
     public void setRememberTokenExpiry(LocalDateTime rememberTokenExpiry) { this.rememberTokenExpiry = rememberTokenExpiry; }
+
+    public Boolean getOnboardingCompleted() { return onboardingCompleted; }
+    public void setOnboardingCompleted(Boolean onboardingCompleted) { this.onboardingCompleted = onboardingCompleted; }
 }

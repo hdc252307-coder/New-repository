@@ -19,7 +19,7 @@ public class DayController {
     private TaskRepository taskRepository;
 
     @Autowired
-    private ScheduleRepository scheduleRepository;
+    private ScheduleService scheduleService;
 
     @GetMapping("/calendar/day")
     public String dayDetail(
@@ -32,7 +32,7 @@ public class DayController {
         if (userDetails == null) return "redirect:/login";
 
         String username = userDetails.getUser().getUsername();
-        LocalDate date = LocalDate.parse(dateStr);
+        LocalDate date = parseDate(dateStr);
 
         // その日に表示すべきタスク:
         // 1) 期限なしは「作成日 == 当日」
@@ -43,7 +43,7 @@ public class DayController {
                 .toList();
 
         // その日と重なるスケジュール（終日の複数日・時刻指定の跨ぎ）
-        List<Schedule> schedules = scheduleRepository.findOverlapping(
+        List<Schedule> schedules = scheduleService.findExpandedOverlapping(
                 username,
                 date.atStartOfDay(),
                 date.plusDays(1).atStartOfDay()
@@ -76,5 +76,12 @@ public class DayController {
             return false;
         }
         return !date.isBefore(created) && !date.isAfter(due);
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) {
+            throw new IllegalArgumentException("date is required");
+        }
+        return LocalDate.parse(dateStr.trim().replace('/', '-'));
     }
 }

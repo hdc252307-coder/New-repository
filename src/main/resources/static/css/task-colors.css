@@ -35,6 +35,15 @@
     border-left: 4px solid #64748b;
 }
 
+/* タスク一覧カード全体の背景色 */
+.task-list-page .task-card.task-color--default { background: #f8fafc; }
+.task-list-page .task-card.task-color--blue { background: #eff6ff; }
+.task-list-page .task-card.task-color--teal { background: #f0fdfa; }
+.task-list-page .task-card.task-color--amber { background: #fffbeb; }
+.task-list-page .task-card.task-color--rose { background: #fff1f2; }
+.task-list-page .task-card.task-color--violet { background: #f5f3ff; }
+.task-list-page .task-card.task-color--slate { background: #f1f5f9; }
+
 .calendar-week-unified .task-item.task-color--default {
     border-left: 3px solid #cfd7e6;
     padding-left: 6px;

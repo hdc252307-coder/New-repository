@@ -14,6 +14,7 @@
 <p class="subtitle">内容を修正してください</p>
 
 <form th:action="@{'/schedule/' + ${schedule.id} + '/update'}" method="post" class="form-area">
+    <input type="hidden" name="returnTo" th:value="${returnTo}">
 
     <div class="form-group">
         <label>タイトル</label>
@@ -59,10 +60,32 @@
         <textarea name="description" rows="3" th:text="${schedule.description}"></textarea>
     </div>
 
+    <div class="form-group">
+        <label>繰り返し</label>
+        <select name="recurrenceType" id="recurrenceType">
+            <option value="none" th:selected="${schedule.recurrenceType == null or schedule.recurrenceType == 'none'}">なし</option>
+            <option value="weekly" th:selected="${schedule.recurrenceType == 'weekly'}">毎週</option>
+            <option value="monthly" th:selected="${schedule.recurrenceType == 'monthly'}">毎月</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="recurrenceIntervalGroup" style="display:none;">
+        <label>繰り返し間隔</label>
+        <input type="number" name="recurrenceInterval" id="recurrenceInterval" min="1"
+               th:value="${schedule.recurrenceInterval != null ? schedule.recurrenceInterval : 1}">
+    </div>
+
+    <div class="form-group" id="recurrenceUntilGroup" style="display:none;">
+        <label>繰り返し終了日（任意）</label>
+        <input type="date" name="recurrenceUntilDate" id="recurrenceUntilDate"
+               th:value="${recurrenceUntilDate}">
+    </div>
+
     <button type="submit" class="btn primary">更新する</button>
 </form>
 
-<a href="/calendar" class="link-text">カレンダーに戻る</a>
+<a class="link-text"
+   th:href="${returnTo != null and !#strings.isEmpty(returnTo)} ? ${returnTo} : @{/calendar}">カレンダーに戻る</a>
 
 </div>
 </div>
@@ -78,6 +101,9 @@
     var en = document.getElementById('endDateTime');
     var sd = document.getElementById('startDate');
     var ed = document.getElementById('endDate');
+    var recurrenceType = document.getElementById('recurrenceType');
+    var recurrenceIntervalGroup = document.getElementById('recurrenceIntervalGroup');
+    var recurrenceUntilGroup = document.getElementById('recurrenceUntilGroup');
     function sync() {
         var on = cb.checked;
         timed.style.display = on ? 'none' : '';
@@ -89,8 +115,15 @@
         if (sd) sd.required = on;
         if (ed) ed.required = on;
     }
+    function syncRecurrence() {
+        var recurring = recurrenceType && recurrenceType.value !== 'none';
+        recurrenceIntervalGroup.style.display = recurring ? '' : 'none';
+        recurrenceUntilGroup.style.display = recurring ? '' : 'none';
+    }
     cb.addEventListener('change', sync);
+    if (recurrenceType) recurrenceType.addEventListener('change', syncRecurrence);
     sync();
+    syncRecurrence();
 })();
 </script>
 
