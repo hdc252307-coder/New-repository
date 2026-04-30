@@ -62,6 +62,7 @@ public class TrashService {
             trash.setTaskCreatedAt(task.getCreatedAt());
             trash.setTaskUpdatedAt(task.getUpdatedAt());
             trash.setTaskColorKey(task.getColorKey());
+            trash.setTaskQuickTodo(task.getQuickTodo());
 
             taskRepository.deleteById(id);
 
@@ -122,6 +123,7 @@ public class TrashService {
             task.setCreatedAt(trash.getTaskCreatedAt());
             task.setUpdatedAt(trash.getTaskUpdatedAt());
             task.setColorKey(TaskColorKeys.normalize(trash.getTaskColorKey()));
+            task.setQuickTodo(Boolean.TRUE.equals(trash.getTaskQuickTodo()));
 
             taskRepository.save(task);
 

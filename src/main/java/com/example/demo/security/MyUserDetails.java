@@ -29,8 +29,6 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() 
-
-    
     {
         return Collections.emptyList();
     }

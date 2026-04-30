@@ -67,6 +67,7 @@ public class ScheduleController {
     {
         if (userDetails == null) return "redirect:/login";
 
+        model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("schedule", new Schedule());
         return "schedule_form";
     }
@@ -146,6 +147,7 @@ public class ScheduleController {
     
     {
         if (userDetails == null) return "redirect:/login";
+        String username = userDetails.getUser().getUsername();
 
         Schedule schedule = scheduleRepository.findById(id).orElse(null);
         if (schedule == null) return "redirect:/calendar";
@@ -166,6 +168,7 @@ public class ScheduleController {
         model.addAttribute("recurrenceUntilDate",
                 schedule.getRecurrenceUntil() != null ? schedule.getRecurrenceUntil().toLocalDate() : null);
         model.addAttribute("returnTo", sanitizeReturnTo(returnTo));
+        model.addAttribute("username", username);
 
         return "schedule_edit";
     }

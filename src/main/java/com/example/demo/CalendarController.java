@@ -13,7 +13,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -124,12 +123,14 @@ public class CalendarController {
         Map<String, List<Task>> taskMap = taskService.mapUndatedTasksByCreatedDay(
                 activeTasks, dates.get(0), dates.get(dates.size() - 1));
         for (LocalDate d : dates) {
-            taskMap.putIfAbsent(d.toString(), Collections.emptyList());
+            taskMap.putIfAbsent(d.toString(), new ArrayList<>());
         }
+        taskService.mergeQuickTodosDueIntoTaskMap(taskMap, activeTasks, dates.get(0), dates.get(dates.size() - 1));
         model.addAttribute("taskMap", taskMap);
         model.addAttribute("dailyTotalCountMap", buildDailyTotalCountMap(activeTasks, monthlySchedules, dates));
 
         model.addAttribute("recommendedTasks", taskService.getRecommendedTasks(username));
+        model.addAttribute("username", username);
 
         return "calendar";
     }
@@ -159,6 +160,22 @@ public class CalendarController {
 
         for (Task t : activeTasks) {
             if (Boolean.TRUE.equals(t.getDone())) {
+                continue;
+            }
+            if (Boolean.TRUE.equals(t.getQuickTodo())) {
+                if (t.getDueDate() != null) {
+                    LocalDate d = t.getDueDate();
+                    if (!d.isBefore(gridStart) && !d.isAfter(gridEnd)) {
+                        String key = d.toString();
+                        countMap.put(key, countMap.getOrDefault(key, 0) + 1);
+                    }
+                } else if (t.getCreatedAt() != null) {
+                    LocalDate day = t.getCreatedAt().toLocalDate();
+                    if (!day.isBefore(gridStart) && !day.isAfter(gridEnd)) {
+                        String key = day.toString();
+                        countMap.put(key, countMap.getOrDefault(key, 0) + 1);
+                    }
+                }
                 continue;
             }
             if (t.getDueDate() != null && t.getCreatedAt() != null) {

@@ -21,33 +21,561 @@
     border-radius: 8px;
 }
 
-.notify-box {
+/* タスク一覧: チュートリアル + お知らせ（折りたたみ） */
+.task-list-toolbar {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto 10px;
+}
+
+.task-list-toolbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.task-list-toolbar-end {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* お知らせの左：クイックToDoへ（小さめ） */
+.task-list-todo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #0c4a6e;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 1px solid #7dd3fc;
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.task-list-todo-btn:hover {
+    background: #e0f2fe;
+    border-color: #38bdf8;
+    color: #075985;
+}
+
+.task-list-todo-btn:focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+}
+
+.task-list-todo-btn--current {
+    cursor: default;
+    color: #0369a1;
+    border-color: #bae6fd;
+    background: #f0f9ff;
+}
+
+.task-list-todo-btn--current:hover {
+    background: #f0f9ff;
+    border-color: #bae6fd;
+    color: #0369a1;
+}
+
+.task-list-toolbar-btn {
+    padding: 8px 12px;
+    min-height: 40px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notify-dropdown {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.notify-dropdown.is-open .notify-toggle-btn {
+    border-color: #3b82f6;
     background: #eff6ff;
-    border-left: 4px solid #60a5fa;
-    padding: 12px;
-    margin: 10px 0 14px;
+}
+
+.notify-toggle-btn {
+    position: relative;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    cursor: pointer;
+    color: #475569;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.notify-toggle-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.notify-toggle-btn.has-alerts {
+    border-color: #60a5fa;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.notify-toggle-btn:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.notify-toggle-glyph {
+    display: block;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1;
+    margin-top: -1px;
+}
+
+.notify-toggle-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.notify-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 50;
+    width: min(300px, calc(100vw - 32px));
+    max-height: min(70vh, 320px);
+    overflow: auto;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+.notify-panel-body {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.notify-panel-body.is-empty {
+    background: #f8fafc;
+}
+
+.notify-panel-title {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #64748b;
+    text-transform: none;
+}
+
+.notify-panel-body ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.notify-panel-body li {
+    margin-bottom: 4px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #334155;
+}
+
+.notify-panel-body li:last-child {
+    margin-bottom: 0;
+}
+
+.notify-panel-body li.notify-warn,
+.notify-panel-body li.notify-warn a {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.notify-empty {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #64748b;
+}
+
+/* タスク一覧: ソート → おすすめ → クイックToDo（縦並び） */
+.task-list-stack {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.task-sort-panel {
+    min-width: 0;
+}
+
+.task-list-filters {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.task-list-filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    align-items: flex-end;
+}
+
+.task-list-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 120px;
+}
+
+.task-list-filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.task-list-filters select {
+    width: 100%;
+    max-width: 100%;
+    padding: 6px 8px;
+    font-size: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #334155;
+}
+
+.task-list-filters-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.task-list-filters-actions .btn.small {
+    padding: 6px 14px;
+    font-size: 13px;
+    min-width: 0;
+    text-decoration: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.task-list-empty-msg {
+    max-width: 640px;
+    margin: 12px auto;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #475569;
+    text-align: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+}
+
+.task-list-empty-msg a {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.task-list-section-note {
+    max-width: 100%;
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: #64748b;
+    text-align: left;
+}
+
+/* クイックToDo（軽量チェックリスト） */
+.quick-todo-box {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 1px dashed #94a3b8;
+    background: #fafafa;
+}
+
+.quick-todo-heading {
+    margin: 0 0 6px 0;
+    font-size: 17px;
+    color: #334155;
+}
+
+.quick-todo-lead {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #64748b;
+}
+
+.quick-todo-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.quick-todo-input {
+    flex: 1 1 180px;
+    min-width: 0;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
 }
 
-.notify-box h3 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
+.quick-todo-date {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
 }
 
-.notify-box ul {
-    margin: 0;
-    padding-left: 18px;
-}
-
-.notify-box li {
-    margin-bottom: 6px;
+.quick-todo-submit {
+    padding: 8px 16px;
     font-size: 14px;
 }
 
-.notify-box li.notify-warn,
-.notify-box li.notify-warn a {
-    color: #b91c1c;
+.quick-todo-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.quick-todo-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+.quick-todo-row:last-child {
+    border-bottom: none;
+}
+
+.quick-todo-check-form,
+.quick-todo-delete-form {
+    margin: 0;
+}
+
+.quick-todo-done-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid #22c55e;
+    background: #f0fdf4;
+    color: #166534;
+    cursor: pointer;
+}
+
+.quick-todo-text {
+    flex: 1 1 140px;
+    min-width: 0;
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.quick-todo-text:hover {
+    text-decoration: underline;
+}
+
+.quick-todo-due {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.quick-todo-delete {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.quick-todo-empty {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.quick-todo-edit-note {
+    margin: -4px 0 14px 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #475569;
+    background: #f1f5f9;
+    border-radius: 8px;
+    border-left: 3px solid #64748b;
+}
+
+.quick-todo-hero {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto 14px;
+    padding: 18px 20px;
+    box-sizing: border-box;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 45%, #fff7ed 100%);
+    border: 1px solid #e0f2fe;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.quick-todo-hero-inner {
+    max-width: 100%;
+}
+
+.quick-todo-hero-kicker {
+    margin: 0 0 8px;
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #0369a1;
+}
+
+.quick-todo-hero-text {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #334155;
+}
+
+.quick-todo-hero-count {
+    margin: 0;
+    font-size: 13px;
+    color: #475569;
+}
+
+.quick-todo-hero-count--zero {
+    color: #64748b;
+    font-style: normal;
+    line-height: 1.5;
+}
+
+.quick-todo-hub {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.quick-todo-hub-btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.quick-todo-main {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.quick-todo-box--solo {
+    border-style: solid;
+    border-color: #cbd5e1;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.quick-todo-empty--solo {
+    padding: 14px 12px;
+    text-align: center;
+    line-height: 1.55;
+    color: #64748b;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #e2e8f0;
+}
+
+/* タスク一覧から専用ページへ */
+.quick-todo-bridge {
+    width: 100%;
+    margin: 0;
+    padding: 16px 18px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid #bae6fd;
+    background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
+    text-align: center;
+}
+
+.quick-todo-bridge-title {
+    margin: 0 0 8px;
+    font-size: 17px;
+    color: #0c4a6e;
+}
+
+.quick-todo-bridge-text {
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #475569;
+}
+
+.quick-todo-bridge-meta {
+    margin: 0;
+    font-size: 13px;
+    color: #0369a1;
+}
+
+@media (max-width: 900px) {
+    .task-list-page .task-list-stack .task-list-section-note {
+        text-align: center;
+    }
 }
 
 .recommend-box h3 {
@@ -99,6 +627,25 @@
     margin-bottom: 14px;
 }
 
+.app-fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: min(640px, calc(100% - 24px));
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 1000;
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+.with-fixed-header {
+    padding-top: 118px;
+}
+
 .task-list-header form {
     position: absolute;
     right: 0;
@@ -112,10 +659,31 @@
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
 }
 
 .header-center .page-title {
-    margin-bottom: 8px;
+    margin-bottom: 0;
+}
+
+.header-logo-link {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.header-logo-link:hover .page-title {
+    color: #1d4ed8;
+}
+
+.header-logo-link:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+    border-radius: 6px;
 }
 
 .help-bubble {
@@ -272,6 +840,11 @@
     border-radius: 10px;
 }
 
+.task-list-page .task-list-stack .recommend-box {
+    margin: 0;
+    max-width: none;
+}
+
 .task-list-page .recommend-box ul {
     list-style: none;
     padding-left: 0;
@@ -301,6 +874,10 @@
 }
 
 @media (max-width: 767px), (max-device-width: 767px) {
+    .with-fixed-header {
+        padding-top: 126px;
+    }
+
     .task-list-header {
         flex-wrap: nowrap;
     }

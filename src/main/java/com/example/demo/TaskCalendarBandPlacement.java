@@ -9,6 +9,8 @@ public record TaskCalendarBandPlacement(
         String colorKey,
         int colStart,
         int colEndInclusive,
-        int lane
+        int lane,
+        /** その週行で帯の左端に対応する日付（ドラッグ移動の基準） */
+        String segmentStartDate
 ) {
 }

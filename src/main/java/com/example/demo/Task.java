@@ -42,6 +42,10 @@ public class Task {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    /** true のときは「クイックToDo」扱い（帯なし・日付は期限のみセル表示など） */
+    @Column(name = "quick_todo")
+    private Boolean quickTodo = false;
+
     public Task() {}
 
     public Long getId() { return id; }
@@ -78,4 +82,11 @@ public class Task {
 
     public String getColorKey() { return colorKey; }
     public void setColorKey(String colorKey) { this.colorKey = colorKey; }
+
+    public Boolean getQuickTodo() { return quickTodo; }
+    public void setQuickTodo(Boolean quickTodo) { this.quickTodo = quickTodo; }
+
+    public boolean isQuickTodo() {
+        return Boolean.TRUE.equals(quickTodo);
+    }
 }

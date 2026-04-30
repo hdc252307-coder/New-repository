@@ -8,7 +8,20 @@
 
 <body>
 
-<div class="calendar-page" th:attr="data-year=${yearMonth.year},data-month=${yearMonth.monthValue}">
+<div class="page-header task-list-header app-fixed-header">
+    <a href="/guide" class="help-bubble">使い方</a>
+    <div class="header-center">
+        <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+            <h1 class="page-title">カレンダー</h1>
+        </a>
+        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+    </div>
+    <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+        <button type="submit" class="logout-btn">ログアウト</button>
+    </form>
+</div>
+
+<div class="calendar-page with-fixed-header" th:attr="data-year=${yearMonth.year},data-month=${yearMonth.monthValue}">
     <div class="calendar-back">
         <a href="/tasks" class="link-text">← タスク一覧に戻る</a>
     </div>
@@ -61,7 +74,7 @@
                     <div class="task-item task-item--undated"
                          th:each="t, iter : ${taskMap[date.toString()]}"
                          th:if="${iter.index < 3}"
-                         th:classappend="${'task-color--' + (t.colorKey != null ? t.colorKey : 'default')}"
+                         th:classappend="${'task-color--' + (t.colorKey != null ? t.colorKey : 'default') + (t.quickTodo != null and t.quickTodo ? ' task-item--quick' : '')}"
                          th:text="${t.title}">
                     </div>
 
@@ -73,7 +86,9 @@
                  th:style="|grid-template-rows: repeat(${bandRowCounts.get(weekStat.index) + scheduleBandRowCounts.get(weekStat.index)}, 18px);|">
                 <a class="task-calendar-band"
                    th:each="seg : ${taskBandWeeks.get(weekStat.index)}"
-                   th:href="@{/tasks/{id}(id=${seg.taskId})}"
+                   th:href="@{/tasks/{id}(id=${seg.taskId},returnTo=${'/calendar?year=' + yearMonth.year + '&month=' + yearMonth.monthValue})}"
+                   draggable="true"
+                   th:attr="data-task-id=${seg.taskId},data-seg-start=${seg.segmentStartDate}"
                    th:classappend="${'task-color--' + seg.colorKey}"
                    th:style="|grid-row: ${seg.lane + 1}; grid-column: ${seg.colStart + 1} / ${seg.colEndInclusive + 2};|"
                    th:title="${seg.title}"
@@ -99,9 +114,30 @@
 (function () {
     var dragging = null;
 
+    function clearDropTargets() {
+        document.querySelectorAll('.day-cell.drop-target').forEach(function (c) {
+            c.classList.remove('drop-target');
+        });
+    }
+
+    function afterMoveNavigate(targetDate) {
+        var page = document.querySelector('.calendar-page');
+        var currentYear = page ? parseInt(page.getAttribute('data-year') || '0', 10) : 0;
+        var currentMonth = page ? parseInt(page.getAttribute('data-month') || '0', 10) : 0;
+        var moved = new Date(targetDate + 'T00:00:00');
+        var movedYear = moved.getFullYear();
+        var movedMonth = moved.getMonth() + 1;
+        if (movedYear !== currentYear || movedMonth !== currentMonth) {
+            window.location.href = '/calendar?year=' + movedYear + '&month=' + movedMonth;
+        } else {
+            window.location.reload();
+        }
+    }
+
     document.querySelectorAll('.schedule-calendar-band').forEach(function (band) {
         band.addEventListener('dragstart', function (e) {
             dragging = {
+                kind: 'schedule',
                 id: band.getAttribute('data-schedule-id'),
                 occStart: band.getAttribute('data-occ-start')
             };
@@ -114,9 +150,27 @@
         band.addEventListener('dragend', function () {
             band.classList.remove('dragging');
             dragging = null;
-            document.querySelectorAll('.day-cell.drop-target').forEach(function (c) {
-                c.classList.remove('drop-target');
-            });
+            clearDropTargets();
+        });
+    });
+
+    document.querySelectorAll('.task-calendar-band').forEach(function (band) {
+        band.addEventListener('dragstart', function (e) {
+            dragging = {
+                kind: 'task',
+                id: band.getAttribute('data-task-id'),
+                segStart: band.getAttribute('data-seg-start')
+            };
+            if (e.dataTransfer) {
+                e.dataTransfer.setData('text/plain', dragging.id || '');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+            band.classList.add('dragging');
+        });
+        band.addEventListener('dragend', function () {
+            band.classList.remove('dragging');
+            dragging = null;
+            clearDropTargets();
         });
     });
 
@@ -134,25 +188,29 @@
             e.preventDefault();
             cell.classList.remove('drop-target');
             var targetDate = cell.getAttribute('data-date');
-            if (!targetDate || !dragging.id || !dragging.occStart) return;
-            fetch('/schedule/' + dragging.id + '/move', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'targetDate=' + encodeURIComponent(targetDate)
-                    + '&occurrenceStartDate=' + encodeURIComponent(dragging.occStart)
-            }).then(function () {
-                var page = document.querySelector('.calendar-page');
-                var currentYear = page ? parseInt(page.getAttribute('data-year') || '0', 10) : 0;
-                var currentMonth = page ? parseInt(page.getAttribute('data-month') || '0', 10) : 0;
-                var moved = new Date(targetDate + 'T00:00:00');
-                var movedYear = moved.getFullYear();
-                var movedMonth = moved.getMonth() + 1;
-                if (movedYear !== currentYear || movedMonth !== currentMonth) {
-                    window.location.href = '/calendar?year=' + movedYear + '&month=' + movedMonth;
-                } else {
-                    window.location.reload();
-                }
-            }).catch(function () {});
+            if (!targetDate || !dragging.id) return;
+
+            if (dragging.kind === 'schedule') {
+                if (!dragging.occStart) return;
+                fetch('/schedule/' + dragging.id + '/move', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'targetDate=' + encodeURIComponent(targetDate)
+                        + '&occurrenceStartDate=' + encodeURIComponent(dragging.occStart)
+                }).then(function () {
+                    afterMoveNavigate(targetDate);
+                }).catch(function () {});
+            } else if (dragging.kind === 'task') {
+                if (!dragging.segStart) return;
+                fetch('/tasks/' + dragging.id + '/move', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'targetDate=' + encodeURIComponent(targetDate)
+                        + '&segmentStartDate=' + encodeURIComponent(dragging.segStart)
+                }).then(function () {
+                    afterMoveNavigate(targetDate);
+                }).catch(function () {});
+            }
         });
     });
 })();

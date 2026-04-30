@@ -36,6 +36,26 @@ public class NotificationService {
             ));
         }
 
+        LocalDate soonEnd = today.plusDays(3);
+        List<Task> dueSoonTasks = taskRepository.findByUsernameAndDoneFalse(username).stream()
+                .filter(t -> {
+                    LocalDate d = t.getDueDate();
+                    if (d == null) {
+                        return false;
+                    }
+                    return !d.isBefore(today) && !d.isAfter(soonEnd);
+                })
+                .sorted(Comparator.comparing(Task::getDueDate))
+                .limit(3)
+                .toList();
+        for (Task t : dueSoonTasks) {
+            out.add(new AppNotification(
+                    "info",
+                    "期限が近いタスク: " + t.getTitle() + "（期限 " + t.getDueDate() + "）",
+                    "/tasks/" + t.getId()
+            ));
+        }
+
         List<Schedule> upcomingSchedules = scheduleService.findExpandedOverlapping(
                 username, now, now.plusHours(24)).stream()
                 .filter(s -> s.getStartDateTime() != null && !s.getStartDateTime().isBefore(now))

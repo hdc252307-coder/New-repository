@@ -7,15 +7,31 @@
 </head>
 <body>
 
-<div class="center-container">
+<div class="page-header task-list-header app-fixed-header">
+    <a href="/guide" class="help-bubble">使い方</a>
+    <div class="header-center">
+        <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+            <h1 class="page-title">タスク編集</h1>
+        </a>
+        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+    </div>
+    <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+        <button type="submit" class="logout-btn">ログアウト</button>
+    </form>
+</div>
+
+<div class="center-container with-fixed-header">
     <div class="card">
         <h1 class="title">タスク編集</h1>
         <p class="subtitle">内容を修正してください</p>
+        <p class="quick-todo-edit-note" th:if="${task.quickTodo != null and task.quickTodo}">
+            この項目は「クイックToDo」です。専用ページではチェックリスト風に表示され、カレンダーの日セルには出ますが<strong>帯</strong>には出ません。
+        </p>
 
         <!-- 編集フォーム -->
         <!-- ★ 修正ポイント：form の入れ子を解消し、更新先を /tasks/{id}/update に統一 -->
         <form th:action="@{'/tasks/' + ${task.id} + '/update'}" method="post" class="form-area">
-
+            <input type="hidden" name="returnTo" th:value="${returnTo}">
 
             <div class="form-group">
                 <label>タイトル</label>
@@ -64,11 +80,39 @@
         </form>
 
         <!-- 戻るリンク -->
-        <a th:href="@{'/tasks/' + ${task.id}}" class="link-text">詳細に戻る</a>
-        <a th:href="@{/tasks}" class="link-text">一覧に戻る</a>
+        <div class="task-edit-nav-links" style="display:flex;flex-wrap:wrap;gap:12px 16px;margin-top:14px;">
+            <a class="link-text" th:if="${returnTo != null and !#strings.isEmpty(returnTo)}"
+               th:href="${returnTo}">前の画面に戻る</a>
+            <a class="link-text" th:unless="${returnTo != null and !#strings.isEmpty(returnTo)}"
+               th:href="@{/calendar}">カレンダーに戻る</a>
+            <a class="link-text"
+               th:href="${returnTo != null and !#strings.isEmpty(returnTo)} ? @{/tasks/{id}(id=${task.id},returnTo=${returnTo})} : @{/tasks/{id}(id=${task.id})}">詳細に戻る</a>
+            <a th:if="${task.quickTodo != null and task.quickTodo}"
+               th:href="@{/tasks/quick}" class="link-text">クイックToDoに戻る</a>
+            <a th:unless="${task.quickTodo != null and task.quickTodo}"
+               th:href="@{/tasks}" class="link-text">一覧に戻る</a>
+        </div>
 
     </div>
 </div>
 
+<script>
+(function () {
+    var pickerInputs = document.querySelectorAll('input[type="date"], input[type="datetime-local"]');
+    pickerInputs.forEach(function (input) {
+        function openPicker() {
+            if (typeof input.showPicker === 'function') {
+                try {
+                    input.showPicker();
+                } catch (e) {
+                    // フォールバック: 非対応/制約時は通常挙動に任せる
+                }
+            }
+        }
+        input.addEventListener('pointerdown', openPicker);
+        input.addEventListener('focus', openPicker);
+    });
+})();
+</script>
 </body>
 </html>

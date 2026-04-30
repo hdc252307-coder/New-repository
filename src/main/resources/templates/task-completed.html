@@ -7,13 +7,19 @@
 </head>
 <body>
 
-<div class="page-container list-page"
+<div class="page-container list-page with-fixed-header"
      th:classappend="${#lists.size(tasks) <= 4} ? ' center-mode' : ' top-mode'">
-    <div class="page-header">
-        <div class="title-user-stack">
-            <h1 class="page-title">完了済みタスク</h1>
+    <div class="page-header task-list-header app-fixed-header">
+        <a href="/guide" class="help-bubble">使い方</a>
+        <div class="header-center">
+            <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+                <h1 class="page-title">完了済みタスク</h1>
+            </a>
             <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
         </div>
+        <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+            <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
     </div>
 
     <p th:if="${#lists.isEmpty(tasks)}" style="text-align:center; color:#6b7a99;">

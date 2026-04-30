@@ -7,32 +7,119 @@
 </head>
 <body>
 
-<div class="page-container task-list-page">
+<div class="page-container task-list-page with-fixed-header">
 
     <!-- ★ page-header 正しく閉じる -->
-    <div class="page-header task-list-header">
+    <div class="page-header task-list-header app-fixed-header">
         <a href="/guide" class="help-bubble">使い方</a>
         <div class="header-center">
-            <h1 class="page-title">タスク一覧</h1>
+            <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+                <h1 class="page-title">タスク一覧</h1>
+            </a>
             <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
         </div>
         <form th:action="@{/logout}" method="post" style="margin-left:auto;">
             <button type="submit" class="logout-btn">ログアウト</button>
         </form>
     </div> <!-- ← ここで確実に閉じる -->
-    <div style="width:100%;max-width:640px;margin:0 auto 8px;text-align:right;">
-        <button type="button" id="openOnboardingBtn" class="btn secondary" style="padding:8px 12px;">チュートリアルを見る</button>
+    <div class="task-list-toolbar">
+        <div class="task-list-toolbar-inner">
+            <button type="button" id="openOnboardingBtn" class="btn secondary task-list-toolbar-btn">チュートリアルを見る</button>
+            <div class="task-list-toolbar-end">
+            <a href="/tasks/quick" class="task-list-todo-btn" title="クイックToDoを開く">Todo</a>
+            <div class="notify-dropdown">
+                <button type="button"
+                        id="notifyToggleBtn"
+                        class="notify-toggle-btn"
+                        th:classappend="${notifications != null and !#lists.isEmpty(notifications)} ? ' has-alerts'"
+                        aria-expanded="false"
+                        aria-controls="notifyPanel"
+                        title="お知らせ"
+                        aria-label="お知らせを開く">
+                    <span class="notify-toggle-glyph" aria-hidden="true">!</span>
+                    <span class="notify-toggle-badge"
+                          th:if="${notifications != null and !#lists.isEmpty(notifications)}"
+                          th:text="${#lists.size(notifications)}">0</span>
+                </button>
+                <div id="notifyPanel"
+                     class="notify-panel"
+                     role="region"
+                     aria-label="お知らせ"
+                     hidden>
+                    <div class="notify-panel-body"
+                         th:classappend="${notifications == null or #lists.isEmpty(notifications)} ? ' is-empty'">
+                        <p class="notify-panel-title">お知らせ</p>
+                        <ul th:if="${notifications != null and !#lists.isEmpty(notifications)}">
+                            <li th:each="n : ${notifications}" th:classappend="${n.level == 'warn'} ? ' notify-warn' : ''">
+                                <a th:if="${n.link != null}" th:href="${n.link}" th:text="${n.message}"></a>
+                                <span th:if="${n.link == null}" th:text="${n.message}"></span>
+                            </li>
+                        </ul>
+                        <p class="notify-empty"
+                           th:if="${notifications == null or #lists.isEmpty(notifications)}">
+                            該当なし（期限切れ・3日以内の期限・24時間以内の予定があれば最大3件ずつ表示）
+                        </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
     </div>
 
-    <div class="notify-box" th:if="${notifications != null and !#lists.isEmpty(notifications)}">
-        <h3>お知らせ</h3>
-        <ul>
-            <li th:each="n : ${notifications}" th:classappend="${n.level == 'warn'} ? ' notify-warn' : ''">
-                <a th:if="${n.link != null}" th:href="${n.link}" th:text="${n.message}"></a>
-                <span th:if="${n.link == null}" th:text="${n.message}"></span>
-            </li>
-        </ul>
-    </div>
+    <div class="task-list-stack">
+        <section class="task-sort-panel">
+            <form class="task-list-filters" th:action="@{/tasks}" method="get">
+                <p class="task-list-section-note">以下の並び・絞り込みは<strong>通常タスク</strong>のみです。</p>
+                <input type="hidden" th:if="${showOnboarding}" name="showOnboarding" value="true">
+                <div class="task-list-filters-row">
+                    <label class="task-list-filter-field">
+                        <span class="task-list-filter-label">並び順</span>
+                        <select name="sort">
+                            <option value="priority" th:selected="${sort == 'priority'}">優先度（高→低）</option>
+                            <option value="due" th:selected="${sort == 'due'}">期限（近い順）</option>
+                            <option value="created" th:selected="${sort == 'created'}">作成日（新しい順）</option>
+                            <option value="title" th:selected="${sort == 'title'}">タイトル（あいうえお）</option>
+                            <option value="estimated" th:selected="${sort == 'estimated'}">見積時間（長い順）</option>
+                        </select>
+                    </label>
+                    <label class="task-list-filter-field">
+                        <span class="task-list-filter-label">色</span>
+                        <select name="colorKey">
+                            <option value="" th:selected="${filterColorKey == null or filterColorKey == ''}">すべて</option>
+                            <option value="default" th:selected="${filterColorKey == 'default'}">デフォルト</option>
+                            <option value="blue" th:selected="${filterColorKey == 'blue'}">青</option>
+                            <option value="teal" th:selected="${filterColorKey == 'teal'}">ティール</option>
+                            <option value="amber" th:selected="${filterColorKey == 'amber'}">アンバー</option>
+                            <option value="rose" th:selected="${filterColorKey == 'rose'}">ローズ</option>
+                            <option value="violet" th:selected="${filterColorKey == 'violet'}">バイオレット</option>
+                            <option value="slate" th:selected="${filterColorKey == 'slate'}">スレート</option>
+                        </select>
+                    </label>
+                    <label class="task-list-filter-field">
+                        <span class="task-list-filter-label">優先度</span>
+                        <select name="priority">
+                            <option value="" th:selected="${filterPriority == null or filterPriority == ''}">すべて</option>
+                            <option value="5" th:selected="${filterPriority == '5'}">高 (5)</option>
+                            <option value="3" th:selected="${filterPriority == '3'}">中 (3)</option>
+                            <option value="1" th:selected="${filterPriority == '1'}">低 (1)</option>
+                        </select>
+                    </label>
+                    <label class="task-list-filter-field">
+                        <span class="task-list-filter-label">期限</span>
+                        <select name="due">
+                            <option value="all" th:selected="${filterDue == 'all'}">すべて</option>
+                            <option value="overdue" th:selected="${filterDue == 'overdue'}">期限切れ</option>
+                            <option value="soon" th:selected="${filterDue == 'soon'}">7日以内（今日含む）</option>
+                            <option value="none" th:selected="${filterDue == 'none'}">期限なし</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="task-list-filters-actions">
+                    <button type="submit" class="btn secondary small">適用</button>
+                    <a th:href="${showOnboarding} ? @{/tasks(showOnboarding=true)} : @{/tasks}" class="btn secondary small">リセット</a>
+                </div>
+            </form>
+        </section>
 
     <!-- おすすめタスク -->
     <div class="recommend-box" th:if="${not #lists.isEmpty(recommendedTasks)}">
@@ -46,8 +133,16 @@
         </ul>
     </div>
 
+    </div>
+
+    <p class="task-list-empty-msg" th:if="${#lists.isEmpty(tasks)}">
+        条件に一致するタスクはありません。絞り込みを変えるか
+        <a th:href="${showOnboarding} ? @{/tasks(showOnboarding=true)} : @{/tasks}">リセット</a>してください。
+    </p>
+
     <!-- タスク一覧 -->
     <div class="task-list"
+         th:if="${not #lists.isEmpty(tasks)}"
          th:classappend="${#lists.size(tasks) == 1} ? ' single-card' : ''">
         <div th:each="task : ${tasks}" class="task-card"
              th:classappend="${'task-color--' + (task.colorKey != null ? task.colorKey : 'default')}">
@@ -208,6 +303,43 @@
     if (overlay.dataset.firstOpen === 'true') {
         openModal();
     }
+})();
+
+(function () {
+    var wrap = document.querySelector('.notify-dropdown');
+    var btn = document.getElementById('notifyToggleBtn');
+    var panel = document.getElementById('notifyPanel');
+    if (!wrap || !btn || !panel) return;
+
+    function setOpen(open) {
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'お知らせを閉じる' : 'お知らせを開く');
+        if (open) {
+            panel.removeAttribute('hidden');
+        } else {
+            panel.setAttribute('hidden', '');
+        }
+        wrap.classList.toggle('is-open', open);
+    }
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(panel.hasAttribute('hidden'));
+    });
+
+    wrap.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', function () {
+        setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !panel.hasAttribute('hidden')) {
+            setOpen(false);
+        }
+    });
 })();
 </script>
 

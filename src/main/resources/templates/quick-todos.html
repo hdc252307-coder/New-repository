@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>クイックToDo</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="page-container quick-todo-page with-fixed-header">
+
+    <div class="page-header task-list-header app-fixed-header">
+        <a href="/guide" class="help-bubble">使い方</a>
+        <div class="header-center">
+            <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+                <h1 class="page-title">クイックToDo</h1>
+            </a>
+            <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+        </div>
+        <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+            <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+    </div>
+
+    <div class="task-list-toolbar">
+        <div class="task-list-toolbar-inner">
+            <div class="task-list-toolbar-end">
+            <span class="task-list-todo-btn task-list-todo-btn--current" aria-current="page" title="この画面">Todo</span>
+            <div class="notify-dropdown">
+                <button type="button"
+                        id="notifyToggleBtn"
+                        class="notify-toggle-btn"
+                        th:classappend="${notifications != null and !#lists.isEmpty(notifications)} ? ' has-alerts'"
+                        aria-expanded="false"
+                        aria-controls="notifyPanel"
+                        title="お知らせ"
+                        aria-label="お知らせを開く">
+                    <span class="notify-toggle-glyph" aria-hidden="true">!</span>
+                    <span class="notify-toggle-badge"
+                          th:if="${notifications != null and !#lists.isEmpty(notifications)}"
+                          th:text="${#lists.size(notifications)}">0</span>
+                </button>
+                <div id="notifyPanel"
+                     class="notify-panel"
+                     role="region"
+                     aria-label="お知らせ"
+                     hidden>
+                    <div class="notify-panel-body"
+                         th:classappend="${notifications == null or #lists.isEmpty(notifications)} ? ' is-empty'">
+                        <p class="notify-panel-title">お知らせ</p>
+                        <ul th:if="${notifications != null and !#lists.isEmpty(notifications)}">
+                            <li th:each="n : ${notifications}" th:classappend="${n.level == 'warn'} ? ' notify-warn' : ''">
+                                <a th:if="${n.link != null}" th:href="${n.link}" th:text="${n.message}"></a>
+                                <span th:if="${n.link == null}" th:text="${n.message}"></span>
+                            </li>
+                        </ul>
+                        <p class="notify-empty"
+                           th:if="${notifications == null or #lists.isEmpty(notifications)}">
+                            該当なし（期限切れ・3日以内の期限・24時間以内の予定があれば最大3件ずつ表示）
+                        </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="quick-todo-hub" aria-label="ほかの画面へ">
+        <a href="/tasks" class="btn secondary quick-todo-hub-btn">通常のタスク一覧</a>
+        <a href="/calendar" class="btn secondary quick-todo-hub-btn">カレンダー</a>
+        <a href="/tasks/completed" class="btn secondary quick-todo-hub-btn">完了済みタスク</a>
+        <a href="/trash" class="btn secondary quick-todo-hub-btn">削除済み一覧</a>
+    </nav>
+
+    <main class="quick-todo-main">
+        <section class="quick-todo-box quick-todo-box--solo" aria-labelledby="quickTodoFormTitle">
+            <h2 id="quickTodoFormTitle" class="quick-todo-heading">いまやること</h2>
+            <p class="quick-todo-lead">思いついたらすぐ書き留めて、終わったら「完了」で流しましょう。</p>
+            <form class="quick-todo-add" th:action="@{/tasks/quick/add}" method="post">
+                <input type="text" name="title" class="quick-todo-input" placeholder="例: 牛乳買う" maxlength="200" required autocomplete="off">
+                <input type="date" name="dueDate" class="quick-todo-date" title="期限（任意）">
+                <button type="submit" class="btn primary quick-todo-submit">追加</button>
+            </form>
+            <ul class="quick-todo-list" th:if="${quickTodos != null and !#lists.isEmpty(quickTodos)}">
+                <li th:each="q : ${quickTodos}" class="quick-todo-row">
+                    <form th:action="@{'/tasks/' + ${q.id} + '/toggle-complete'}" method="post" class="quick-todo-check-form">
+                        <button type="submit" class="quick-todo-done-btn" title="完了にする">完了</button>
+                    </form>
+                    <a th:href="@{/tasks/{id}/edit(id=${q.id},returnTo=${quickTodoReturnTo})}" class="quick-todo-text" th:text="${q.title}">title</a>
+                    <span class="quick-todo-due" th:if="${q.dueDate != null}" th:text="${'〆 ' + q.dueDate}"></span>
+                    <form th:action="@{'/tasks/' + ${q.id} + '/delete'}" method="post" class="quick-todo-delete-form"
+                          onsubmit="return confirm('このクイックToDoを削除しますか？');">
+                        <button type="submit" class="btn secondary quick-todo-delete">削除</button>
+                    </form>
+                </li>
+            </ul>
+            <p class="quick-todo-empty quick-todo-empty--solo" th:if="${quickTodos == null or #lists.isEmpty(quickTodos)}">
+                ここにリストが並びます。買い物・電話・ちょっとした用事に向いています。
+            </p>
+        </section>
+    </main>
+
+</div>
+
+<script>
+(function () {
+    var pickerInputs = document.querySelectorAll('input[type="date"], input[type="datetime-local"]');
+    pickerInputs.forEach(function (input) {
+        function openPicker() {
+            if (typeof input.showPicker === 'function') {
+                try {
+                    input.showPicker();
+                } catch (e) {
+                    // フォールバック: 非対応/制約時は通常挙動に任せる
+                }
+            }
+        }
+        input.addEventListener('pointerdown', openPicker);
+        input.addEventListener('focus', openPicker);
+    });
+})();
+
+(function () {
+    var wrap = document.querySelector('.notify-dropdown');
+    var btn = document.getElementById('notifyToggleBtn');
+    var panel = document.getElementById('notifyPanel');
+    if (!wrap || !btn || !panel) return;
+
+    function setOpen(open) {
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'お知らせを閉じる' : 'お知らせを開く');
+        if (open) {
+            panel.removeAttribute('hidden');
+        } else {
+            panel.setAttribute('hidden', '');
+        }
+        wrap.classList.toggle('is-open', open);
+    }
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(panel.hasAttribute('hidden'));
+    });
+
+    wrap.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', function () {
+        setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !panel.hasAttribute('hidden')) {
+            setOpen(false);
+        }
+    });
+})();
+</script>
+</body>
+</html>

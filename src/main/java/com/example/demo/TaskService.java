@@ -31,6 +31,7 @@ public class TaskService {
         Comparator<Task> comparator = recommendedComparator(today);
 
         List<Task> mustDoToday = tasks.stream()
+                .filter(t -> !t.isQuickTodo())
                 .filter(t -> t.getDueDate() != null && !t.getDueDate().isAfter(today))
                 .sorted(comparator)
                 .limit(3)
@@ -41,6 +42,7 @@ public class TaskService {
         }
 
         List<Task> upcoming = tasks.stream()
+                .filter(t -> !t.isQuickTodo())
                 .filter(t -> t.getDueDate() != null && t.getDueDate().isAfter(today))
                 .sorted(comparator)
                 .limit(3 - mustDoToday.size())
@@ -94,6 +96,9 @@ public class TaskService {
     public Map<String, List<Task>> mapUndatedTasksByCreatedDay(List<Task> tasks, LocalDate gridStart, LocalDate gridEnd) {
         Map<String, List<Task>> map = new HashMap<>();
         for (Task task : tasks) {
+            if (task.isQuickTodo() && task.getDueDate() != null) {
+                continue;
+            }
             if (task.getDueDate() != null) {
                 continue;
             }
@@ -131,6 +136,9 @@ public class TaskService {
             if (Boolean.TRUE.equals(t.getDone())) {
                 continue;
             }
+            if (t.isQuickTodo()) {
+                continue;
+            }
             if (t.getDueDate() == null || t.getCreatedAt() == null) {
                 continue;
             }
@@ -158,7 +166,7 @@ public class TaskService {
                 int colStart = idxS % 7;
                 int colEnd = idxE % 7;
                 rawByWeek.get(w).add(new RawBand(
-                        t.getId(), t.getTitle(), color, colStart, colEnd, t.getCreatedAt()));
+                        t.getId(), t.getTitle(), color, colStart, colEnd, t.getCreatedAt(), segS.toString()));
             }
         }
 
@@ -167,6 +175,32 @@ public class TaskService {
             out.add(assignLanes(rawByWeek.get(w)));
         }
         return out;
+    }
+
+    /**
+     * クイックToDoで期限があるものだけ、期限日のセル用リストへ追加する（帯とは別表示）。
+     */
+    public void mergeQuickTodosDueIntoTaskMap(
+            Map<String, List<Task>> taskMap,
+            List<Task> tasks,
+            LocalDate gridStart,
+            LocalDate gridEnd
+    ) {
+        for (Task t : tasks) {
+            if (!t.isQuickTodo() || t.getDueDate() == null) {
+                continue;
+            }
+            LocalDate d = t.getDueDate();
+            if (d.isBefore(gridStart) || d.isAfter(gridEnd)) {
+                continue;
+            }
+            String key = d.toString();
+            taskMap.compute(key, (k, old) -> {
+                List<Task> out = old == null ? new ArrayList<>() : new ArrayList<>(old);
+                out.add(t);
+                return out;
+            });
+        }
     }
 
     private static List<TaskCalendarBandPlacement> assignLanes(List<RawBand> raw) {
@@ -195,7 +229,13 @@ public class TaskService {
                 chosenLane = laneLastEnd.size() - 1;
             }
             placed.add(new TaskCalendarBandPlacement(
-                    seg.taskId, seg.title, seg.colorKey, seg.colStart, seg.colEnd, chosenLane));
+                    seg.taskId,
+                    seg.title,
+                    seg.colorKey,
+                    seg.colStart,
+                    seg.colEnd,
+                    chosenLane,
+                    seg.segmentStartDate));
         }
         return placed;
     }
@@ -207,14 +247,24 @@ public class TaskService {
         final int colStart;
         final int colEnd;
         final LocalDateTime createdAt;
+        final String segmentStartDate;
 
-        RawBand(Long taskId, String title, String colorKey, int colStart, int colEnd, LocalDateTime createdAt) {
+        RawBand(
+                Long taskId,
+                String title,
+                String colorKey,
+                int colStart,
+                int colEnd,
+                LocalDateTime createdAt,
+                String segmentStartDate
+        ) {
             this.taskId = taskId;
             this.title = title;
             this.colorKey = colorKey;
             this.colStart = colStart;
             this.colEnd = colEnd;
             this.createdAt = createdAt;
+            this.segmentStartDate = segmentStartDate;
         }
     }
 }

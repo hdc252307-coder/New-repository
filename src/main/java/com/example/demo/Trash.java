@@ -37,6 +37,9 @@ public class Trash {
     @Column(name = "task_color_key", length = 32)
     private String taskColorKey;
 
+    @Column(name = "task_quick_todo")
+    private Boolean taskQuickTodo;
+
     // ▼ Schedule の復元に必要なフィールド
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -103,6 +106,9 @@ public class Trash {
 
     public String getTaskColorKey() { return taskColorKey; }
     public void setTaskColorKey(String taskColorKey) { this.taskColorKey = taskColorKey; }
+
+    public Boolean getTaskQuickTodo() { return taskQuickTodo; }
+    public void setTaskQuickTodo(Boolean taskQuickTodo) { this.taskQuickTodo = taskQuickTodo; }
 
     public LocalDateTime getStartDateTime() { return startDateTime; }
     public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }

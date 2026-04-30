@@ -54,6 +54,7 @@ public class DayController {
         model.addAttribute("date", date);
         model.addAttribute("tasks", tasks);
         model.addAttribute("schedules", schedules);
+        model.addAttribute("username", username);
 
         return "day";
     }
@@ -63,6 +64,15 @@ public class DayController {
     }
 
     private boolean isTaskVisibleOnDate(Task task, LocalDate date) {
+        if (task.isQuickTodo()) {
+            if (task.getDueDate() != null) {
+                return date.isEqual(task.getDueDate());
+            }
+            if (task.getCreatedAt() != null) {
+                return date.isEqual(task.getCreatedAt().toLocalDate());
+            }
+            return false;
+        }
         if (task.getCreatedAt() == null) {
             return task.getDueDate() != null && task.getDueDate().isEqual(date);
         }

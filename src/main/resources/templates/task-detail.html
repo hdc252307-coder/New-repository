@@ -7,7 +7,20 @@
 </head>
 <body>
 
-<div class="center-container">
+<div class="page-header task-list-header app-fixed-header">
+    <a href="/guide" class="help-bubble">使い方</a>
+    <div class="header-center">
+        <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+            <h1 class="page-title">タスク詳細</h1>
+        </a>
+        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+    </div>
+    <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+        <button type="submit" class="logout-btn">ログアウト</button>
+    </form>
+</div>
+
+<div class="center-container with-fixed-header">
     <div class="card"
          th:classappend="${'task-color--' + (task.colorKey != null ? task.colorKey : 'default')}">
 
@@ -53,12 +66,23 @@
         </div>
 
         <div class="button-group" style="margin-top: 30px;">
-            <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn primary">編集する</a>
+            <a th:if="${returnTo != null and !#strings.isEmpty(returnTo)}"
+               th:href="@{/tasks/{id}/edit(id=${task.id},returnTo=${returnTo})}"
+               class="btn primary">編集する</a>
+            <a th:unless="${returnTo != null and !#strings.isEmpty(returnTo)}"
+               th:href="@{/tasks/{id}/edit(id=${task.id})}"
+               class="btn primary">編集する</a>
             <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" class="full-width-form">
                 <button type="submit" class="btn secondary"
                         th:text="${task.done} ? '未完了に戻す' : '完了にする'"></button>
             </form>
-            <a th:href="@{/tasks}" class="btn secondary">一覧に戻る</a>
+            <a th:if="${returnTo != null and !#strings.isEmpty(returnTo)}"
+               th:href="${returnTo}"
+               class="btn secondary">前の画面に戻る</a>
+            <a th:if="${task.quickTodo != null and task.quickTodo}"
+               th:href="@{/tasks/quick}" class="btn secondary">クイックToDoに戻る</a>
+            <a th:unless="${task.quickTodo != null and task.quickTodo}"
+               th:href="@{/tasks}" class="btn secondary">一覧に戻る</a>
         </div>
 
     </div>

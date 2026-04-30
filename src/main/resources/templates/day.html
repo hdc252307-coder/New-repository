@@ -8,7 +8,20 @@
 
 <body>
 
-<div class="day-page">
+<div class="page-header task-list-header app-fixed-header">
+    <a href="/guide" class="help-bubble">使い方</a>
+    <div class="header-center">
+        <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+            <h1 class="page-title">日付詳細</h1>
+        </a>
+        <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+    </div>
+    <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+        <button type="submit" class="logout-btn">ログアウト</button>
+    </form>
+</div>
+
+<div class="day-page with-fixed-header">
 <div class="day-card">
 
     <div class="day-header">

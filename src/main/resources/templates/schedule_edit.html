@@ -8,7 +8,20 @@
 
 <body>
 
-<div class="center-container">
+<div class="page-header task-list-header app-fixed-header">
+<a href="/guide" class="help-bubble">使い方</a>
+<div class="header-center">
+    <a href="/tasks" class="header-logo-link" title="タスク一覧へ戻る">
+        <h1 class="page-title">スケジュール編集</h1>
+    </a>
+    <span class="user-badge" th:text="${'ユーザー: ' + username}"></span>
+</div>
+<form th:action="@{/logout}" method="post" style="margin-left:auto;">
+    <button type="submit" class="logout-btn">ログアウト</button>
+</form>
+</div>
+
+<div class="center-container with-fixed-header">
 <div class="card">
 <h1 class="title">スケジュール編集</h1>
 <p class="subtitle">内容を修正してください</p>
@@ -124,6 +137,23 @@
     if (recurrenceType) recurrenceType.addEventListener('change', syncRecurrence);
     sync();
     syncRecurrence();
+})();
+
+(function () {
+    var pickerInputs = document.querySelectorAll('input[type="date"], input[type="datetime-local"]');
+    pickerInputs.forEach(function (input) {
+        function openPicker() {
+            if (typeof input.showPicker === 'function') {
+                try {
+                    input.showPicker();
+                } catch (e) {
+                    // フォールバック: 非対応/制約時は通常挙動に任せる
+                }
+            }
+        }
+        input.addEventListener('pointerdown', openPicker);
+        input.addEventListener('focus', openPicker);
+    });
 })();
 </script>
 
