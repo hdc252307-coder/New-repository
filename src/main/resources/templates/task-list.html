@@ -180,11 +180,12 @@
     <a href="/tasks/new" class="btn primary add-task-btn">＋ 新しいタスク</a>
     <a href="/tasks/completed" class="btn secondary add-task-btn">完了済みタスク</a>
     <a href="/calendar" class="btn calendar add-task-btn">カレンダー</a>
-    <a th:href="@{/trash}" class="btn secondary add-task-btn">削除済み一覧</a>
+    <a th:href="@{/trash}" class="btn secondary add-task-btn task-list-trash-link">削除済み一覧</a>
 
 </div>
 
-<div id="onboardingOverlay" class="onboarding-overlay" style="display:none;" th:attr="data-first-open=${showOnboarding}">
+<div id="onboardingOverlay" class="onboarding-overlay" style="display:none;"
+     th:attr="data-auto-open=${onboardingAutoOpen},data-open-replay=${showOnboardingRequested}">
     <div class="onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
         <div class="onboarding-head">
             <h3 id="onboardingTitle">はじめての使い方ガイド</h3>
@@ -270,6 +271,9 @@
     }
 
     function markCompleted() {
+        try {
+            sessionStorage.removeItem('onboardingAutoSuppressed');
+        } catch (e) { /* ignore */ }
         fetch('/tasks/onboarding/complete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -293,15 +297,30 @@
         render();
     });
 
-    closeBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', function () {
+        // 「閉じる」だけでは DB が更新されずリロードのたびに再表示されるため、
+        // 同一ブラウザではセッション中は自動表示を抑止する（「チュートリアルを見る」からは開ける）
+        try {
+            sessionStorage.setItem('onboardingAutoSuppressed', '1');
+        } catch (e) { /* private mode 等 */ }
+        closeModal();
+    });
     skipBtn.addEventListener('click', function () {
         markCompleted();
         closeModal();
     });
     if (openBtn) openBtn.addEventListener('click', openModal);
 
-    if (overlay.dataset.firstOpen === 'true') {
+    if (overlay.dataset.openReplay === 'true') {
         openModal();
+    } else if (overlay.dataset.autoOpen === 'true') {
+        var suppressed = false;
+        try {
+            suppressed = sessionStorage.getItem('onboardingAutoSuppressed') === '1';
+        } catch (e) { /* ignore */ }
+        if (!suppressed) {
+            openModal();
+        }
     }
 })();
 
@@ -316,6 +335,12 @@
         btn.setAttribute('aria-label', open ? 'お知らせを閉じる' : 'お知らせを開く');
         if (open) {
             panel.removeAttribute('hidden');
+            if (!wrap.classList.contains('notify-badge-cleared')) {
+                wrap.classList.add('notify-badge-cleared');
+                btn.classList.remove('has-alerts');
+                var badge = btn.querySelector('.notify-toggle-badge');
+                if (badge) badge.setAttribute('hidden', '');
+            }
         } else {
             panel.setAttribute('hidden', '');
         }

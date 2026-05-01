@@ -131,6 +131,12 @@
         btn.setAttribute('aria-label', open ? 'お知らせを閉じる' : 'お知らせを開く');
         if (open) {
             panel.removeAttribute('hidden');
+            if (!wrap.classList.contains('notify-badge-cleared')) {
+                wrap.classList.add('notify-badge-cleared');
+                btn.classList.remove('has-alerts');
+                var badge = btn.querySelector('.notify-toggle-badge');
+                if (badge) badge.setAttribute('hidden', '');
+            }
         } else {
             panel.setAttribute('hidden', '');
         }

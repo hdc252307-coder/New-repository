@@ -47,7 +47,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 32px;
+    min-height: 40px;
     padding: 0 12px;
     box-sizing: border-box;
     font-size: 12px;
@@ -871,6 +871,10 @@
     box-sizing: border-box;
     padding: 14px 0;
     font-size: 16px;
+}
+
+.task-list-page .add-task-btn.task-list-trash-link {
+    margin-bottom: 24px;
 }
 
 @media (max-width: 767px), (max-device-width: 767px) {

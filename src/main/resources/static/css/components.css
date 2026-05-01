@@ -91,6 +91,13 @@
 /* =========================
    フォーム（共通）
 ========================= */
+/* 全 textarea：width 指定時も外寸が親からはみ出さないよう input と同じ前提にする */
+textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+}
+
 .form-area,
 .login-form {
     display: flex;
@@ -131,8 +138,9 @@
     box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
 }
 
-/* textarea */
-.form-group textarea {
+/* textarea の見た目（上記の box-sizing は全体共通） */
+.form-group textarea,
+.login-form textarea {
     width: 100%;
     padding: 12px 14px;
     border-radius: 10px;
@@ -142,7 +150,8 @@
     transition: 0.2s;
 }
 
-.form-group textarea:focus {
+.form-group textarea:focus,
+.login-form textarea:focus {
     outline: none;
     border-color: #5a8fd8;
     box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
@@ -264,11 +273,12 @@
     box-shadow: 0 0 0 3px rgba(90, 143, 216, 0.2);
 }
 
-/* 優先度だけ見た目の幅を強制調整 */
-.priority-group select {
-    width: calc(100% + 27px);
+/* datetime-local 等がカードからはみ出すブラウザ対策（他入力と同じ 100% 枠内に収める） */
+.form-group input[type="datetime-local"],
+.form-group input[type="date"],
+.form-group input[type="time"] {
+    max-width: 100%;
 }
-
 
 /* =========================
    リンク（共通）

@@ -189,7 +189,8 @@
     position: absolute;
     top: 6px;
     right: 6px;
-    z-index: 4;
+    /* 帯オーバーレイ(z-index:3)より手前に出し、+N バッジが隠れないようにする */
+    z-index: 6;
     font-size: 10px;
     line-height: 1;
     color: #1e3a8a;

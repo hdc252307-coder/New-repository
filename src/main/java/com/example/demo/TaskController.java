@@ -82,8 +82,11 @@ public class TaskController {
         model.addAttribute("recommendedTasks", taskService.getRecommendedTasks(username));
         model.addAttribute("notifications", notificationService.getNotifications(username));
         User currentUser = userRepository.findByUsername(username);
-        boolean firstOpen = currentUser != null && !Boolean.TRUE.equals(currentUser.getOnboardingCompleted());
+        // 新規登録のみ false。既存ユーザーで列が null のときは「未完了」と誤判定しない（毎回チュートリアル表示の防止）
+        boolean firstOpen = currentUser != null && Boolean.FALSE.equals(currentUser.getOnboardingCompleted());
         model.addAttribute("showOnboarding", firstOpen || showOnboardingRequested);
+        model.addAttribute("onboardingAutoOpen", firstOpen);
+        model.addAttribute("showOnboardingRequested", showOnboardingRequested);
 
         return "task-list";
     }
