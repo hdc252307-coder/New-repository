@@ -45,16 +45,26 @@
 ========================= */
 @media (max-width: 767px), (max-device-width: 767px) {
     .page-container {
-        width: 100%;
-        max-width: 620px;
+        width: 90%;
+        max-width: 100%;
         margin: 0 auto;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 0 16px 20px;
+        /* 幅90%のまま、内側にほんの少しガターを足して窮屈さを減らす（左右対称） */
+        padding: 0 8px;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    .login-container {
+        width: 90%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        padding: 48px 32px;
     }
 
     .page-title {
@@ -84,7 +94,8 @@
 
     .card,
     .login-card {
-        max-width: 620px;
+        width: 100%;
+        max-width: 100%;
         min-height: 520px;
         margin: 0 auto;
     }
@@ -107,7 +118,18 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 0 12px 20px;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .center-container {
+        width: 90%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        /* ベース 24px より左右 +8px（内側ガター）、上下はがっつり余白 */
+        padding: 48px 32px;
     }
 }
 
@@ -177,6 +199,7 @@
 
 @media (max-width: 767px), (max-device-width: 767px) {
     .center-container .card.standard-form-card {
-        max-width: min(520px, calc(100vw - 48px));
+        width: 100%;
+        max-width: 100%;
     }
 }

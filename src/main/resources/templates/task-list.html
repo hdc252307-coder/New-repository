@@ -160,13 +160,13 @@
                     期限：<span th:text="${task.dueDate}"></span>
                 </p>
                 <p class="task-time">
-                    所要時間：<span th:text="${task.estimatedMinutes}"></span> 分
+                    所要時間：<span th:text="${task.estimatedMinutes != null ? task.estimatedMinutes + ' 分' : '-'}"></span>
                 </p>
             </div>
 
             <div class="task-actions">
-                <a th:href="@{'/tasks/' + ${task.id}}" class="btn small primary">詳細</a>
-                <a th:href="@{'/tasks/' + ${task.id} + '/edit'}" class="btn small secondary">編集</a>
+                <a th:href="@{/tasks/{id}(id=${task.id},returnTo='/tasks')}" class="btn small primary">詳細</a>
+                <a th:href="@{/tasks/{id}/edit(id=${task.id},returnTo='/tasks')}" class="btn small secondary">編集</a>
                 <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" style="display:inline;">
                     <button type="submit" class="btn small secondary"
                             th:text="${task.done} ? '未完了' : '完了'"></button>

@@ -4,10 +4,13 @@
 body {
     margin: 0;
     padding: 0;
+    /* 全画面共通の下端余白（モバイルは一覧・カレンダーと揃えて広め） */
+    padding-bottom: 20px;
     font-family: "Segoe UI", "Noto Sans JP", sans-serif;
     background: #f3f6fb;
     position: relative;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 body::before {
@@ -68,4 +71,14 @@ body::before {
     margin-bottom: 28px;
     color: #6b7a99;
     font-size: 14px;
+}
+
+@media (max-width: 767px), (max-device-width: 767px) {
+    body {
+        padding-bottom: 52px;
+    }
+
+    .subtitle {
+        margin-bottom: 36px;
+    }
 }

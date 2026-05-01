@@ -46,7 +46,7 @@
 
                 <div class="item-meta">
                     <span th:text="${'優先度: ' + (t.priority == 1 ? '1(低)' : (t.priority == 3 ? '3(中)' : (t.priority == 5 ? '5(高)' : t.priority)))}"></span>
-                    <span th:text="${'見積: ' + t.estimatedMinutes + '分'}"></span>
+                    <span th:text="${'見積: ' + (t.estimatedMinutes != null ? t.estimatedMinutes + '分' : '-')}"></span>
                 </div>
 
                 <div class="day-buttons">
@@ -88,7 +88,12 @@
                 <div class="item-meta"
                      th:if="${schedule.allDay != null and schedule.allDay}">
                     終日
-                    <span th:text="${#temporals.format(schedule.startDateTime.toLocalDate(), 'yyyy-MM-dd') + ' 〜 ' + #temporals.format(schedule.endDateTime.toLocalDate(), 'yyyy-MM-dd')}"></span>
+                    <span th:with="inEnd=${T(com.example.demo.ScheduleAllDaySupport).toInclusiveEndDate(schedule.startDateTime, schedule.endDateTime, schedule.allDay)}"
+                          th:text="${inEnd != null
+                              ? (schedule.startDateTime.toLocalDate().equals(inEnd)
+                                  ? #temporals.format(schedule.startDateTime.toLocalDate(), 'yyyy-MM-dd')
+                                  : (#temporals.format(schedule.startDateTime.toLocalDate(), 'yyyy-MM-dd') + ' 〜 ' + #temporals.format(inEnd, 'yyyy-MM-dd')))
+                              : (#temporals.format(schedule.startDateTime.toLocalDate(), 'yyyy-MM-dd') + ' 〜 ' + #temporals.format(schedule.endDateTime.toLocalDate(), 'yyyy-MM-dd'))}"></span>
                 </div>
                 <div class="item-meta"
                      th:unless="${schedule.allDay != null and schedule.allDay}"

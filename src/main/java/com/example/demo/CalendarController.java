@@ -125,7 +125,6 @@ public class CalendarController {
         for (LocalDate d : dates) {
             taskMap.putIfAbsent(d.toString(), new ArrayList<>());
         }
-        taskService.mergeQuickTodosDueIntoTaskMap(taskMap, activeTasks, dates.get(0), dates.get(dates.size() - 1));
         model.addAttribute("taskMap", taskMap);
         model.addAttribute("dailyTotalCountMap", buildDailyTotalCountMap(activeTasks, monthlySchedules, dates));
 
@@ -163,19 +162,7 @@ public class CalendarController {
                 continue;
             }
             if (Boolean.TRUE.equals(t.getQuickTodo())) {
-                if (t.getDueDate() != null) {
-                    LocalDate d = t.getDueDate();
-                    if (!d.isBefore(gridStart) && !d.isAfter(gridEnd)) {
-                        String key = d.toString();
-                        countMap.put(key, countMap.getOrDefault(key, 0) + 1);
-                    }
-                } else if (t.getCreatedAt() != null) {
-                    LocalDate day = t.getCreatedAt().toLocalDate();
-                    if (!day.isBefore(gridStart) && !day.isAfter(gridEnd)) {
-                        String key = day.toString();
-                        countMap.put(key, countMap.getOrDefault(key, 0) + 1);
-                    }
-                }
+                // クイックToDoはカレンダー（セル表示・+N集計）に出さない。
                 continue;
             }
             if (t.getDueDate() != null && t.getCreatedAt() != null) {

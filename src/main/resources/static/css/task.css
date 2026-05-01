@@ -28,6 +28,16 @@
     margin: 0 auto 10px;
 }
 
+@media (max-width: 767px), (max-device-width: 767px) {
+    .task-list-toolbar {
+        max-width: 100%;
+    }
+
+    .task-list-header {
+        max-width: 100%;
+    }
+}
+
 .task-list-toolbar-inner {
     display: flex;
     justify-content: space-between;
@@ -623,7 +633,7 @@
     max-width: 640px;
     margin-left: auto;
     margin-right: auto;
-    min-height: 96px;
+    min-height: 88px;
     margin-bottom: 14px;
 }
 
@@ -642,8 +652,24 @@
     box-shadow: none;
 }
 
+@media (max-width: 767px), (max-device-width: 767px) {
+    .app-fixed-header {
+        width: 90%;
+        max-width: 640px;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+}
+
 .with-fixed-header {
     padding-top: 118px;
+}
+
+.center-container.with-fixed-header {
+    align-items: flex-start;
+    padding-top: 108px;
+    /* 下端は body の padding-bottom（20px）に揃える */
+    padding-bottom: 0;
 }
 
 .task-list-header form {
@@ -879,11 +905,90 @@
 
 @media (max-width: 767px), (max-device-width: 767px) {
     .with-fixed-header {
-        padding-top: 126px;
+        /* 固定ヘッダー下：がっつり余白（一覧・フォーム共通） */
+        padding-top: 158px;
+    }
+
+    .center-container.with-fixed-header {
+        padding-top: 144px;
     }
 
     .task-list-header {
         flex-wrap: nowrap;
+        min-height: 112px;
+        margin-bottom: 28px;
+    }
+
+    /*
+     * タスク一覧：親は page-container の 90% 幅なのに、子に max-width:640px が残ると
+     * ツールバーだけ広く・白いカード列だけ狭く見える。モバイルでは親幅いっぱいに揃える。
+     */
+    .task-list-page .task-list-toolbar {
+        margin-bottom: 26px;
+    }
+
+    .task-list-page .task-list-stack {
+        max-width: 100%;
+        width: 100%;
+        gap: 36px;
+        margin-bottom: 40px;
+    }
+
+    .task-list-page .task-list-filters {
+        padding: 26px 24px;
+    }
+
+    .task-list-page .task-list-filters-actions {
+        margin-top: 22px;
+    }
+
+    .task-list-page .task-list {
+        max-width: 100%;
+        width: 100%;
+        gap: 40px;
+        margin-top: 24px;
+        /* 2列のまま、列幅を親の 100% から割り当て（300px 上限を外す） */
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .task-list-page .task-list.single-card {
+        max-width: 100%;
+        grid-template-columns: 1fr;
+    }
+
+    .task-list-page .task-card {
+        max-width: 100%;
+        padding: 30px 20px;
+    }
+
+    .task-list-page .task-actions {
+        margin-top: 26px;
+        gap: 20px;
+    }
+
+    .task-list-page .recommend-box {
+        max-width: 100%;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        padding: 28px 22px;
+    }
+
+    .task-list-page .add-task-btn {
+        max-width: 100%;
+        margin-top: 28px;
+        padding: 24px 0;
+    }
+
+    .task-list-page .add-task-btn.task-list-trash-link {
+        margin-bottom: 48px;
+    }
+
+    .task-list-empty-msg {
+        max-width: 100%;
+        padding: 24px 22px;
     }
 }
 

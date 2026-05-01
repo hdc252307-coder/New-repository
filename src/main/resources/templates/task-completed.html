@@ -40,7 +40,7 @@
                 <p class="task-time">完了日時：<span th:text="${task.completedAt != null ? #temporals.format(task.completedAt, 'yyyy-MM-dd HH:mm') : '-'}"></span></p>
             </div>
             <div class="task-actions">
-                <a th:href="@{'/tasks/' + ${task.id}}" class="btn small primary">詳細</a>
+                <a th:href="@{/tasks/{id}(id=${task.id},returnTo='/tasks/completed')}" class="btn small primary">詳細</a>
                 <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" style="display:inline;">
                     <button type="submit" class="btn small secondary">未完了に戻す</button>
                 </form>

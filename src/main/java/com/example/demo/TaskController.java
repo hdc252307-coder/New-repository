@@ -151,7 +151,7 @@ public class TaskController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String dueDate,
             @RequestParam int priority,
-            @RequestParam int estimatedMinutes,
+            @RequestParam(required = false) Integer estimatedMinutes,
             @RequestParam(required = false, defaultValue = "default") String colorKey
     )
     {
@@ -163,7 +163,7 @@ public class TaskController {
         task.setTitle(title);
         task.setDescription(description);
         task.setPriority(priority);
-        task.setEstimatedMinutes(estimatedMinutes);
+        task.setEstimatedMinutes(normalizeEstimatedMinutes(estimatedMinutes));
 
         if (dueDate != null && !dueDate.isEmpty())
         {
@@ -271,9 +271,9 @@ public class TaskController {
             @AuthenticationPrincipal MyUserDetails userDetails,
             @RequestParam String title,
             @RequestParam(required = false) String description,
-            @RequestParam String dueDate,
+            @RequestParam(required = false) String dueDate,
             @RequestParam int priority,
-            @RequestParam int estimatedMinutes,
+            @RequestParam(required = false) Integer estimatedMinutes,
             @RequestParam(required = false, defaultValue = "default") String colorKey,
             @RequestParam(required = false) String returnTo
     )
@@ -287,8 +287,12 @@ public class TaskController {
         task.setTitle(title);
         task.setDescription(description);
         task.setPriority(priority);
-        task.setEstimatedMinutes(estimatedMinutes);
-        task.setDueDate(LocalDate.parse(dueDate));
+        task.setEstimatedMinutes(normalizeEstimatedMinutes(estimatedMinutes));
+        if (dueDate != null && !dueDate.isBlank()) {
+            task.setDueDate(LocalDate.parse(dueDate.trim()));
+        } else {
+            task.setDueDate(null);
+        }
         task.setColorKey(TaskColorKeys.normalize(colorKey));
         task.setUpdatedAt(LocalDateTime.now());
 
@@ -440,6 +444,13 @@ public class TaskController {
             // fall through
         }
         return null;
+    }
+
+    private static Integer normalizeEstimatedMinutes(Integer estimatedMinutes) {
+        if (estimatedMinutes == null || estimatedMinutes < 1) {
+            return null;
+        }
+        return estimatedMinutes;
     }
 
     /**

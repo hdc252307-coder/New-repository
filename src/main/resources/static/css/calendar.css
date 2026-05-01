@@ -4,7 +4,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 12px;
+    /* 下端余白は body の padding-bottom に任せる */
+    padding: 20px 12px 0;
     box-sizing: border-box;
 }
 
@@ -276,8 +277,49 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px 12px;
+    padding: 20px 12px 0;
     box-sizing: border-box;
+}
+
+@media (max-width: 767px), (max-device-width: 767px) {
+    .calendar-page,
+    .day-page {
+        width: 90%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        /* 90% 幅のまま内側に軽いガター（layout の page-container と揃える） */
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 40px;
+        padding-bottom: 16px;
+    }
+
+    .calendar-card {
+        padding: 28px 20px;
+    }
+
+    .calendar-header {
+        margin-bottom: 28px;
+    }
+
+    .day-card {
+        padding: 38px 24px;
+    }
+
+    .day-section {
+        margin-top: 32px;
+    }
+
+    .item-card {
+        padding: 16px 14px;
+        margin-bottom: 14px;
+    }
+
+    .calendar-body {
+        gap: 16px;
+    }
 }
 
 .day-card {

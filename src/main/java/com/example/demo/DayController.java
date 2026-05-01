@@ -65,12 +65,7 @@ public class DayController {
 
     private boolean isTaskVisibleOnDate(Task task, LocalDate date) {
         if (task.isQuickTodo()) {
-            if (task.getDueDate() != null) {
-                return date.isEqual(task.getDueDate());
-            }
-            if (task.getCreatedAt() != null) {
-                return date.isEqual(task.getCreatedAt().toLocalDate());
-            }
+            // クイックToDoはカレンダー系画面（日付詳細含む）には表示しない。
             return false;
         }
         if (task.getCreatedAt() == null) {

@@ -42,7 +42,7 @@
             </p>
 
             <p><strong>所要時間：</strong>
-                <span th:text="${task.estimatedMinutes}"></span> 分
+                <span th:text="${task.estimatedMinutes != null ? task.estimatedMinutes + ' 分' : '-'}"></span>
             </p>
 
             <p><strong>優先度：</strong>

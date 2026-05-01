@@ -25,7 +25,7 @@
         <h1 class="title">タスク編集</h1>
         <p class="subtitle">内容を修正してください</p>
         <p class="quick-todo-edit-note" th:if="${task.quickTodo != null and task.quickTodo}">
-            この項目は「クイックToDo」です。専用ページではチェックリスト風に表示され、カレンダーの日セルには出ますが<strong>帯</strong>には出ません。
+            この項目は「クイックToDo」です。専用ページではチェックリスト風に表示され、カレンダーには表示されません。
         </p>
 
         <!-- 編集フォーム -->
@@ -46,13 +46,13 @@
 
             <div class="form-group">
                 <label>期限</label>
-                <input type="date" name="dueDate" th:value="${task.dueDate}" required>
+                <input type="date" name="dueDate" th:value="${task.dueDate}">
             </div>
 
             <div class="form-group">
                 <label>所要時間（分）</label>
                 <input type="number" name="estimatedMinutes"
-                       th:value="${task.estimatedMinutes}" min="1" required>
+                       th:value="${task.estimatedMinutes}" min="1">
             </div>
 
             <div class="form-group">

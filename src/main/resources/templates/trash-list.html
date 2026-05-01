@@ -48,7 +48,7 @@
                 <div th:if="${t.type == 'task'}">
                     <p>期限：<span th:text="${t.dueDate}"></span></p>
                     <p>優先度：<span th:text="${t.priority == 1 ? '1(低)' : (t.priority == 3 ? '3(中)' : (t.priority == 5 ? '5(高)' : t.priority))}"></span></p>
-                    <p>所要時間：<span th:text="${t.estimatedMinutes}"></span> 分</p>
+                    <p>所要時間：<span th:text="${t.estimatedMinutes != null ? t.estimatedMinutes + ' 分' : '-'}"></span></p>
                     <p>説明：<span th:text="${t.description}"></span></p>
                 </div>
 

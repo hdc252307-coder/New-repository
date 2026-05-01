@@ -84,6 +84,7 @@
 
     <div class="form-group" id="recurrenceIntervalGroup" style="display:none;">
         <label>繰り返し間隔</label>
+        <p id="recurrenceIntervalHint" class="form-hint" style="margin:0 0 6px 0; color:#6b7a99; font-size:12px;">1回ごとに繰り返します</p>
         <input type="number" name="recurrenceInterval" id="recurrenceInterval" min="1"
                th:value="${schedule.recurrenceInterval != null ? schedule.recurrenceInterval : 1}">
     </div>
@@ -95,6 +96,13 @@
     </div>
 
     <button type="submit" class="btn primary">更新する</button>
+</form>
+
+<form th:action="@{/schedule/{id}/delete(id=${schedule.id},returnTo=${returnTo})}"
+      method="post"
+      onsubmit="return confirm('このスケジュールを削除しますか？');"
+      style="margin-top: 10px;">
+    <button type="submit" class="btn danger small">削除</button>
 </form>
 
 <a class="link-text"
@@ -117,23 +125,51 @@
     var recurrenceType = document.getElementById('recurrenceType');
     var recurrenceIntervalGroup = document.getElementById('recurrenceIntervalGroup');
     var recurrenceUntilGroup = document.getElementById('recurrenceUntilGroup');
+    var recurrenceInterval = document.getElementById('recurrenceInterval');
+    var recurrenceIntervalHint = document.getElementById('recurrenceIntervalHint');
     function sync() {
         var on = cb.checked;
         timed.style.display = on ? 'none' : '';
         timedEnd.style.display = on ? 'none' : '';
         allday.style.display = on ? '' : 'none';
         alldayEnd.style.display = on ? '' : 'none';
+        if (on && sd && !sd.value && st && st.value) {
+            sd.value = st.value.slice(0, 10);
+        }
+        if (on && sd && !ed.value && sd.value) {
+            ed.value = sd.value;
+        }
         if (st) st.required = !on;
         if (en) en.required = !on;
         if (sd) sd.required = on;
         if (ed) ed.required = on;
     }
+    function syncAllDayDates() {
+        if (!cb.checked || !sd || !ed) return;
+        if (!ed.value || ed.value < sd.value) {
+            ed.value = sd.value;
+        }
+    }
+    function syncRecurrenceHint() {
+        if (!recurrenceIntervalHint || !recurrenceType || !recurrenceInterval) return;
+        var every = recurrenceInterval.value && recurrenceInterval.value.trim() !== '' ? recurrenceInterval.value : '1';
+        if (recurrenceType.value === 'weekly') {
+            recurrenceIntervalHint.textContent = every + '週間ごとに繰り返します';
+        } else if (recurrenceType.value === 'monthly') {
+            recurrenceIntervalHint.textContent = every + 'か月ごとに繰り返します';
+        } else {
+            recurrenceIntervalHint.textContent = '1回ごとに繰り返します';
+        }
+    }
     function syncRecurrence() {
         var recurring = recurrenceType && recurrenceType.value !== 'none';
         recurrenceIntervalGroup.style.display = recurring ? '' : 'none';
         recurrenceUntilGroup.style.display = recurring ? '' : 'none';
+        syncRecurrenceHint();
     }
     cb.addEventListener('change', sync);
+    if (sd) sd.addEventListener('change', syncAllDayDates);
+    if (recurrenceInterval) recurrenceInterval.addEventListener('input', syncRecurrenceHint);
     if (recurrenceType) recurrenceType.addEventListener('change', syncRecurrence);
     sync();
     syncRecurrence();
