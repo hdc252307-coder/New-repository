@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>タスク一覧</title>
-    <link rel="stylesheet" th:href="@{/css/style.css(v='20260501a')}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260501i')}">
 </head>
 <body>
 
@@ -167,7 +167,7 @@
             <div class="task-actions">
                 <a th:href="@{/tasks/{id}(id=${task.id},returnTo='/tasks')}" class="btn small primary">詳細</a>
                 <a th:href="@{/tasks/{id}/edit(id=${task.id},returnTo='/tasks')}" class="btn small secondary">編集</a>
-                <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" style="display:inline;">
+                <form th:action="@{'/tasks/' + ${task.id} + '/toggle-complete'}" method="post" class="task-actions-complete-form">
                     <button type="submit" class="btn small secondary"
                             th:text="${task.done} ? '未完了' : '完了'"></button>
                 </form>

@@ -783,6 +783,47 @@
     margin: 0;
 }
 
+/* タスク一覧カードのみ：上段に「詳細」「編集」、下段に「完了／未完了」（逆三角） */
+.task-list-page .task-list .task-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
+    row-gap: 14px;
+    margin-top: 18px;
+    width: 100%;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.task-list-page .task-list .task-actions > form.task-actions-complete-form {
+    grid-column: 1 / -1;
+    display: block;
+    /* 上段1個分と同じ幅（2列 + column-gap 12px に合わせる） */
+    width: calc((100% - 12px) / 2);
+    max-width: calc((100% - 12px) / 2);
+    justify-self: center;
+    margin: 0;
+}
+
+.task-list-page .task-list .task-actions > .btn.small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.task-list-page .task-list .task-actions form.task-actions-complete-form .btn.small {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
 .btn.small {
     padding: 10px 0;
     font-size: 15px;
@@ -798,11 +839,11 @@
 }
 
 .task-list-page .task-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 300px));
-    gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    justify-items: stretch;
+    align-content: flex-start;
+    gap: 16px;
     width: 100%;
     max-width: 640px;
     margin-left: auto;
@@ -810,19 +851,26 @@
     margin-top: 8px;
 }
 
+/* 2列相当：行末の余白でブロック全体が中央に寄る */
+.task-list-page .task-list > .task-card {
+    box-sizing: border-box;
+    flex: 0 1 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+    min-width: 0;
+    /* width:100% だと flex の子が行いっぱいに伸び、justify-content:center が効かない */
+    width: auto;
+}
+
 .task-list-page .task-list.single-card {
-    grid-template-columns: minmax(0, 300px);
-    max-width: 300px;
+    max-width: min(560px, 100%);
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.task-list-page .task-list > .task-card:only-child {
-    grid-column: 1 / -1;
-    justify-self: center;
-}
-
-.task-list-page .task-list > .task-card:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    justify-self: center;
+.task-list-page .task-list.single-card > .task-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    width: 100%;
 }
 
 .task-list-page .task-header {
@@ -853,8 +901,8 @@
 
 .task-list-page .task-card {
     position: relative;
-    width: 100%;
-    max-width: 300px;
+    width: auto;
+    max-width: none;
 }
 
 .task-list-page .recommend-box {
@@ -1017,25 +1065,28 @@
     .task-list-page .task-list {
         max-width: 100%;
         width: 100%;
-        gap: 40px;
         margin-top: 24px;
-        /* 2列のまま、列幅を親の 100% から割り当て（300px 上限を外す） */
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px 16px;
+    }
+
+    .task-list-page .task-list > .task-card {
+        flex: 0 1 calc(50% - 8px);
+        max-width: calc(50% - 8px);
     }
 
     .task-list-page .task-list.single-card {
         max-width: 100%;
-        grid-template-columns: 1fr;
+    }
+
+    .task-list-page .task-list.single-card > .task-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+        width: 100%;
     }
 
     .task-list-page .task-card {
         max-width: 100%;
-        padding: 30px 20px;
-    }
-
-    .task-list-page .task-actions {
-        margin-top: 26px;
-        gap: 20px;
+        padding: 32px 22px 52px;
     }
 
     .task-list-page .recommend-box {
@@ -1061,6 +1112,155 @@
     .task-list-empty-msg {
         max-width: 100%;
         padding: 24px 22px;
+    }
+}
+
+/* =========================
+   タスク一覧（PC）：横長を活かす
+   ※ layout.css の .task-list / .task-card より詳細度で上書き
+========================= */
+@media (min-width: 768px) {
+    .page-container.task-list-page {
+        width: min(96%, 1480px);
+        max-width: 1480px;
+        padding-left: 24px;
+        padding-right: 24px;
+        box-sizing: border-box;
+    }
+
+    .task-list-page .task-list-header {
+        max-width: none;
+        width: 100%;
+    }
+
+    .task-list-page .task-list-toolbar {
+        max-width: none;
+        width: 100%;
+    }
+
+    .task-list-page .task-list-toolbar-inner {
+        gap: 14px;
+        align-items: center;
+    }
+
+    .task-list-page .task-list-toolbar-end {
+        gap: 12px;
+        padding-right: 4px;
+    }
+
+    .task-list-page .task-list-todo-btn {
+        min-height: 48px;
+        padding: 0 16px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .task-list-page .task-list-toolbar-btn {
+        min-height: 48px;
+        padding: 0 16px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .task-list-page .notify-toggle-btn {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+        border-radius: 10px;
+    }
+
+    .task-list-page .notify-toggle-glyph {
+        font-size: 20px;
+    }
+
+    .task-list-page .task-list-stack {
+        max-width: none;
+        width: 100%;
+    }
+
+    .task-list-page .task-list-filters {
+        padding: 20px 22px;
+    }
+
+    .task-list-page .task-list-filters-row {
+        gap: 14px 18px;
+    }
+
+    .task-list-page .task-list-filter-label {
+        font-size: 13px;
+    }
+
+    .task-list-page .task-list-filters select {
+        min-height: 44px;
+        padding: 8px 12px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+
+    .task-list-page .task-list-filters-actions {
+        gap: 10px;
+    }
+
+    .task-list-page .task-list-filters-actions .btn.small {
+        min-height: 44px;
+        padding: 8px 16px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+
+    .task-list-page .task-list {
+        max-width: none;
+        width: 100%;
+        margin-top: 20px;
+        gap: 22px 24px;
+    }
+
+    .task-list-page .task-list > .task-card {
+        flex: 0 1 300px;
+        max-width: min(320px, 100%);
+    }
+
+    .task-list-page .task-list.single-card {
+        max-width: min(560px, 100%);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .task-list-page .task-list.single-card > .task-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .task-list-page .task-card {
+        max-width: none;
+        padding: 28px 24px 52px;
+    }
+
+    .task-list-page .task-title {
+        font-size: clamp(16px, 1.15vw, 20px);
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+
+    .task-list-page .task-body {
+        font-size: 16px;
+    }
+
+    .task-list-page .add-task-btn {
+        max-width: none;
+        padding: 16px 0;
+        font-size: 17px;
+    }
+
+    .task-list-page .recommend-box {
+        max-width: none;
+    }
+
+    .task-list-page .task-list-empty-msg {
+        max-width: none;
+        font-size: 16px;
+        padding: 18px 22px;
     }
 }
 
