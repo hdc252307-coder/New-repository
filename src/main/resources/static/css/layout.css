@@ -58,7 +58,7 @@
         text-align: center;
     }
 
-    .login-container {
+    .login-container:not(.auth-gate) {
         width: 90%;
         max-width: 100%;
         margin-left: auto;
@@ -122,7 +122,7 @@
         box-sizing: border-box;
     }
 
-    .center-container {
+    .center-container:not(.auth-gate) {
         width: 90%;
         max-width: 100%;
         margin-left: auto;
@@ -201,5 +201,65 @@
     .center-container .card.standard-form-card {
         width: 100%;
         max-width: 100%;
+    }
+}
+
+/* =========================
+   トップ・ログイン・新規（.auth-gate）：カードの縦横
+========================= */
+@media (max-width: 767px), (max-device-width: 767px) {
+    .auth-gate.center-container,
+    .auth-gate.login-container {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 28px 0 48px;
+        box-sizing: border-box;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .auth-gate .card,
+    .auth-gate .login-card {
+        align-self: stretch;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        min-height: min(780px, 96vh);
+        margin: 0;
+        padding: 52px 28px 60px;
+        border-radius: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media (min-width: 768px) {
+    .auth-gate.center-container,
+    .auth-gate.login-container {
+        padding: 48px 32px 56px;
+        box-sizing: border-box;
+    }
+
+    .auth-gate .card,
+    .auth-gate .login-card {
+        max-width: 640px;
+        width: 100%;
+        min-height: 620px;
+        padding: 56px 64px;
+        box-sizing: border-box;
+    }
+
+    .auth-gate.center-container .card {
+        max-width: 640px;
+    }
+
+    .auth-gate .title,
+    .auth-gate .login-title {
+        font-size: 32px;
     }
 }

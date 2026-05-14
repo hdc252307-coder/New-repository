@@ -2,14 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>新規登録</title>
-    <link rel="stylesheet" th:href="@{/css/style.css(v='20260501i')}">
+    <title>新規登録 | Work Planner</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260209b')}">
 </head>
 <body>
 
-<div class="center-container">
+<div class="center-container auth-gate">
     <div class="card">
-        <h1 class="title">新規登録</h1>
+        <h1 class="title">Work Planner</h1>
+        <p class="subtitle">あなたの毎日を、美しく保つ</p>
+        <h2 class="login-title">新規登録</h2>
         <p class="subtitle">アカウントを作成して始めましょう</p>
 
         <form th:action="@{/register}" method="post" class="form-area">
